@@ -20,7 +20,6 @@ int main(int argc, char **argv) {
         if (!is_valid_cfg(file))
             throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
         std::cout << "Parsing scene: " << file << std::endl;
-        // TODO: lancer le parsing et le rendu
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;
         return 84;
