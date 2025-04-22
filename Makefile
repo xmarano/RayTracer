@@ -39,8 +39,6 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	g++ $(OBJ) -o $(NAME) $(FLAGS) $(SFML)
-	rm -rf src/*.o *.gcno *.gcda
-
 
 tests_run:  re
 	@echo "---------- Running tests on $(UNAME_S) ----------"
