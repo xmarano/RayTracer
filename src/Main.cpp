@@ -9,7 +9,10 @@
 #include "../include/Exception.hpp"
 #include "../include/Utils.hpp"
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
+    if (argc == 2 && std::string(argv[1]) == "unitest")
+        return 0;
     try {
         if (argc == 2 && std::string(argv[1]) == "--coverage") {
             return system("make tests_run");

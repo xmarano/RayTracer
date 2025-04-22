@@ -1,0 +1,7 @@
+.vscode
+.DS_Store
+a.out
+
+coverage.txt
+*.py
+unitests

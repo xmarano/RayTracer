@@ -1,0 +1,31 @@
+name: Unitest Criterion C++
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  unitest-criterion:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt install -y \
+            g++ \
+            libsfml-dev \
+            make \
+            libcriterion-dev \
+            gcovr
+
+      - name: Build & Run Criterion Tests
+        run: |
+          make tests_run
