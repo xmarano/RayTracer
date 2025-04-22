@@ -26,4 +26,4 @@ jobs:
 
       - name: Build & Test
         run: |
-          make unitest
+          make build
