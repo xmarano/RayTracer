@@ -4,7 +4,6 @@
 ** File description:
 ** OOP
 */
-#include <libconfig.h++>
 #include "../include/ConfigParser.hpp"
 #include "../include/Exception.hpp"
 
@@ -12,6 +11,7 @@ Config::Scene Config::parseScene(const std::string &file)
 {
     libconfig::Config cfg;
     Config::Scene scene;
+    cfg.setAutoConvert(true);
 
     try {
         cfg.readFile(file.c_str());

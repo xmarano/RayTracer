@@ -5,8 +5,8 @@
 ** OOP
 */
 #include <vector>
-#include "Math/Point3D.hpp"
-#include "Math/Vector3D.hpp"
+#include </opt/homebrew/include/libconfig.h++>
+#include "Math3D.hpp"
 
 #pragma once
 
@@ -24,9 +24,6 @@ namespace Config {
             int width;
             int height;
             Math::Point3D position;
-            int position_x;
-            int position_y;
-            int position_z;
             Math::Vector3D rotation;
             double fieldOfView;
 

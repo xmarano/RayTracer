@@ -40,16 +40,11 @@ int main(int argc, char **argv)
         }
 
         Config::Scene scene = Config::parseScene(file);
-        std::cout << "Camera: "
-        << scene.camera.width  << "×"
-        << scene.camera.height << ", "
-        << "FOV=" << scene.camera.fieldOfView
-        << "\n"
-        << "  pos=("
-        << scene.camera.position.x << ","
-        << scene.camera.position.y << ","
-        << scene.camera.position.z << ")\n";
-        
+        std::cout << "Camera: "<< scene.camera.width  << "×"<< scene.camera.height << std::endl;
+        std::cout << "POS=(" << scene.camera.position.x << "," << scene.camera.position.y << "," << scene.camera.position.z << ")\n";
+        std::cout << "ROT=(" << scene.camera.rotation.x << "," << scene.camera.rotation.y << "," << scene.camera.rotation.z << ")\n";
+        std::cout << "FOV=" << scene.camera.fieldOfView << std::endl;
+
         // temp(file);
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;
