@@ -10,6 +10,7 @@ FLAGS = -std=c++17 -Wall -Wextra -Iinclude
 SFML = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 SRC =	src/Main.cpp \
+		src/Display.cpp \
 		src/Ray.cpp \
 		src/Sphere.cpp \
 		src/Plane.cpp \
