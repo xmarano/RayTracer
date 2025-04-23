@@ -5,3 +5,13 @@
 ** AmbientLight.hpp
 */
 
+#pragma once
+
+namespace RayTracer {
+    class AmbientLight {
+    public:
+        float intensity;
+
+        AmbientLight(float i = 0.1f) : intensity(i) {}
+    };
+}
