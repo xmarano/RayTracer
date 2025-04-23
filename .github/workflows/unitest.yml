@@ -22,7 +22,8 @@ jobs:
           sudo apt update && sudo apt install -y \
             g++ \
             libsfml-dev \
-            make
+            make \
+            ibconfig++-dev
 
       - name: Build & Test
         run: |

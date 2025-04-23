@@ -24,7 +24,8 @@ jobs:
             libsfml-dev \
             make \
             libcriterion-dev \
-            gcovr
+            gcovr \
+            ibconfig++-dev
 
       - name: Build & Run Criterion Tests
         run: |
