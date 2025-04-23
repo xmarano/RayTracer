@@ -7,22 +7,22 @@
 
 #include "../include/Scene.hpp"
 
-using namespace RayTracer;
+// using namespace RayTracer;
 
-Scene::Scene() : ambient(0.1f) {}
+// Scene::Scene() : ambient(0.1f) {}
 
-void Scene::addObject(std::shared_ptr<IPrimitive> obj) {
-    objects.push_back(obj);
-}
+// void Scene::addObject(std::shared_ptr<IPrimitive> obj) {
+//     objects.push_back(obj);
+// }
 
-void Scene::addDirectionalLight(const DirectionalLight &light) {
-    directionalLights.push_back(light);
-}
+// void Scene::addDirectionalLight(const DirectionalLight &light) {
+//     directionalLights.push_back(light);
+// }
 
-void Scene::setAmbientLight(const AmbientLight &light) {
-    ambient = light;
-}
+// void Scene::setAmbientLight(const AmbientLight &light) {
+//     ambient = light;
+// }
 
-void Scene::setCamera(const Camera &cam) {
-    camera = cam;
-}
+// void Scene::setCamera(const Camera &cam) {
+//     camera = cam;
+// }

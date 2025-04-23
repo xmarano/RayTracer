@@ -46,17 +46,18 @@ $(NAME): $(OBJ)
 	g++ $(OBJ) -o $(NAME) $(FLAGS) $(SFML) $(LDFLAGS)
 
 tests_run:  re
-	@echo "---------- Running tests on $(UNAME_S) ----------"
-	g++ $(TEST_SRC) $(OBJ) -o $(TEST_NAME) $(FLAGS) $(TEST_FLAGS) --coverage
+	@echo "---------- Running tests on $(OS) ----------"
+	g++ $(TEST_SRC) $(OBJ) -o $(TEST_NAME) $(FLAGS) $(TEST_FLAGS) $(SFML) $(LDFLAGS) --coverage
 	./$(TEST_NAME) unitest
 	@echo "---------- COVERAGE ----------"
 	gcovr > coverage.txt
-	gcovr -b >> coverage.txt
+	gcovr --txt-metric branch >> coverage.txt
 	@echo "---------- COVERAGE.TXT ----------"
+	rm -rf src/*.o *.gcno *.gcda *.gcov $(TEST_NAME) $(NAME)
 
 clean:
 	rm -f $(OBJ) src/Main.o
-	rm -rf src/*.o *.gcno *.gcda
+	rm -rf src/*.o *.gcno *.gcda *.gcov
 
 fclean: clean
 	rm -f $(NAME) $(TEST_NAME)

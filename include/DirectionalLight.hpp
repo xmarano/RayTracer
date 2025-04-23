@@ -8,13 +8,12 @@
 #pragma once
 #include "Math3D.hpp"
 
-namespace RayTracer {
-    class DirectionalLight {
-    public:
-        Math::Vector3D direction;
-        float intensity;
+// namespace RayTracer {
+//     class DirectionalLight {
+//     public:
+//         Math::Vector3D direction;
+//         float intensity;
 
-        DirectionalLight(Math::Vector3D dir = {0, -1, 0}, float i = 1.0f)
-            : direction(dir), intensity(i) {}
-    };
-}
+//         DirectionalLight(Math::Vector3D dir = {0, -1, 0}, float i = 1.0f) : direction(dir), intensity(i) {}
+//     };
+// }

@@ -8,4 +8,5 @@ coverage.txt
 *.o
 *.gcda
 *.gcno
+*.gcov
 unitests

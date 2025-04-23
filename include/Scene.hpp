@@ -14,20 +14,20 @@
 #include "DirectionalLight.hpp"
 #include "Camera.hpp"
 
-namespace RayTracer {
+// namespace RayTracer {
 
-    class Scene {
-    public:
-        std::vector<std::shared_ptr<IPrimitive>> objects;
-        std::vector<DirectionalLight> directionalLights;
-        AmbientLight ambient;
-        Camera camera;
+//     class Scene {
+//         public:
+//             std::vector<std::shared_ptr<IPrimitive>> objects;
+//             std::vector<DirectionalLight> directionalLights;
+//             AmbientLight ambient;
+//             Camera camera;
 
-        Scene();
+//             Scene();
 
-        void addObject(std::shared_ptr<IPrimitive> obj);
-        void addDirectionalLight(const DirectionalLight &light);
-        void setAmbientLight(const AmbientLight &light);
-        void setCamera(const Camera &cam);
-    };
-}
+//             void addObject(std::shared_ptr<IPrimitive> obj);
+//             void addDirectionalLight(const DirectionalLight &light);
+//             void setAmbientLight(const AmbientLight &light);
+//             void setCamera(const Camera &cam);
+//     };
+// }
