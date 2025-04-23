@@ -5,7 +5,11 @@
 ** OOP
 */
 #include <vector>
+#ifdef __APPLE__
 #include </opt/homebrew/include/libconfig.h++>
+#elif __linux__
+#include </usr/include/libconfig.h++>
+#endif
 #include "Math3D.hpp"
 
 #pragma once
