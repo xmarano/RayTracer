@@ -23,7 +23,7 @@ jobs:
             g++ \
             libsfml-dev \
             make \
-            ibconfig++-dev
+            libconfig++-dev
 
       - name: Build & Test
         run: |

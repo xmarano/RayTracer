@@ -25,7 +25,7 @@ jobs:
             make \
             libcriterion-dev \
             gcovr \
-            ibconfig++-dev
+            libconfig++-dev
 
       - name: Build & Run Criterion Tests
         run: |
