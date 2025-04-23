@@ -11,6 +11,7 @@ FLAGS = -std=c++17 -Wall -Wextra -Iinclude
 SFML = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 SRC =	src/Main.cpp \
+		src/ConfigParser.cpp \
 		src/Display.cpp \
 		src/Ray.cpp \
 		src/Sphere.cpp \
@@ -18,7 +19,6 @@ SRC =	src/Main.cpp \
 		src/DirectionalLight.cpp \
 		src/Camera.cpp \
 		src/Scene.cpp \
-		src/SceneLoader.cpp \
 		src/Material.cpp \
 		src/Utils.cpp \
 		src/Math3D.cpp	\

@@ -9,6 +9,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Exception.hpp"
 #include "Utils.hpp"
