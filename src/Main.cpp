@@ -12,7 +12,7 @@
 #include "../include/Display.hpp"
 #include "../include/ConfigParser.hpp"
 
-void temp(const std::string &file)
+void ppm(const std::string &file)
 {
     Display display;
     display.parseFile(file);
@@ -35,8 +35,13 @@ int main(int argc, char **argv)
             throw RayTracerException("USAGE: ./raytracer <SCENE_FILE>");
         }
         std::string file = argv[1];
-        if ((file != "scenes/demo.ppm") && !(is_valid_cfg(file))) {
+        int is_ppm = file.substr(file.find_last_of(".") + 1) == "ppm";
+        if (!is_ppm && !(is_valid_cfg(file))) {
             throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
+        }
+        if (is_ppm) {
+            ppm(file);
+            return 0;
         }
 
         Config::Scene scene = Config::parseScene(file);
@@ -44,8 +49,6 @@ int main(int argc, char **argv)
         std::cout << "POS=(" << scene.camera.position.x << "," << scene.camera.position.y << "," << scene.camera.position.z << ")\n";
         std::cout << "ROT=(" << scene.camera.rotation.x << "," << scene.camera.rotation.y << "," << scene.camera.rotation.z << ")\n";
         std::cout << "FOV=" << scene.camera.fieldOfView << std::endl;
-
-        // temp(file);
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;
         return 84;
