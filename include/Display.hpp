@@ -1,16 +1,17 @@
 /*
 ** EPITECH PROJECT, 2024
-** Raytracer
+** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
-** OOP
+** Display.hpp
 */
+
 #include <string>
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <SFML/Graphics.hpp>
-#include "../include/Exception.hpp"
-#include "../include/Utils.hpp"
+#include "Exception.hpp"
+#include "Utils.hpp"
 
 #pragma once
 

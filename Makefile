@@ -1,9 +1,10 @@
 ##
-## EPITECH PROJECT, 2025
-## Raytracer
+## EPITECH PROJECT, 2024
+## B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ## File description:
 ## Makefile
 ##
+
 NAME = raytracer
 
 FLAGS = -std=c++17 -Wall -Wextra -Iinclude
@@ -19,7 +20,9 @@ SRC =	src/Main.cpp \
 		src/Scene.cpp \
 		src/SceneLoader.cpp \
 		src/Material.cpp \
-		src/Utils.cpp
+		src/Utils.cpp \
+		src/Math3D.cpp	\
+		src/AmbientLight.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

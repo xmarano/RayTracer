@@ -1,11 +1,11 @@
 /*
 ** EPITECH PROJECT, 2024
-** Raytracer
+** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
-** OOP
+** Exception.hpp
 */
+
 #pragma once
-#include <stdexcept>
 
 class RayTracerException : public std::runtime_error {
 public:

@@ -1,9 +1,10 @@
 /*
 ** EPITECH PROJECT, 2024
-** Raytracer
+** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
-** OOP
+** Main.cpp
 */
+
 #include <iostream>
 #include <string>
 #include "../include/Exception.hpp"

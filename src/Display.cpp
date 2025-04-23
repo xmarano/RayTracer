@@ -1,9 +1,10 @@
 /*
 ** EPITECH PROJECT, 2024
-** Raytracer
+** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
-** OOP
+** Display.cpp
 */
+
 #include "../include/Display.hpp"
 
 Display::Display() : _width(0), _height(0), _maxval(255)
