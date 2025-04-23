@@ -51,7 +51,7 @@ tests_run:  re
 	./$(TEST_NAME) unitest
 	@echo "---------- COVERAGE ----------"
 	gcovr > coverage.txt
-	gcovr --txt-metric branch >> coverage.txt
+	gcovr -b >> coverage.txt
 	@echo "---------- COVERAGE.TXT ----------"
 	rm -rf src/*.o *.gcno *.gcda *.gcov $(TEST_NAME) $(NAME)
 
