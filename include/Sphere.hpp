@@ -7,18 +7,22 @@
 
 
 #pragma once
-#include "Math3D.hpp"
-#include "Ray.hpp"
-#include "Color.hpp"
+
+#include "IPrimitive.hpp"
 
 namespace RayTracer {
-    class Sphere {
+
+    class Sphere : public IPrimitive {
     public:
         Math::Point3D center;
         double radius;
         Color color;
 
-        Sphere(Math::Point3D _center, double _radius, Color _color);
-        bool hits(const Ray &ray);
+        Sphere(Math::Point3D center, double radius, Color color);
+
+        bool hits(const Ray &ray) const override;
+        void translate(const Math::Vector3D &v) override;
+        const Color &getColor() const override;
     };
 }
+

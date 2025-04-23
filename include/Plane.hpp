@@ -6,21 +6,20 @@
 */
 
 #pragma once
-
-#include "Math3D.hpp"
-#include "Ray.hpp"
-#include "Color.hpp"
+#include "IPrimitive.hpp"
 
 namespace RayTracer {
-    class Plane {
+
+    class Plane : public IPrimitive {
     public:
         Math::Point3D point;
         Math::Vector3D normal;
         Color color;
 
-        Plane();
-        Plane(const Math::Point3D &point, const Math::Vector3D &normal, const Color &color);
+        Plane(Math::Point3D point, Math::Vector3D normal, Color color);
 
-        bool hits(const Ray &ray) const;
+        bool hits(const Ray &ray) const override;
+        void translate(const Math::Vector3D &v) override;
+        const Color &getColor() const override;
     };
 }

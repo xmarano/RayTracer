@@ -8,10 +8,12 @@
 #include "../include/Sphere.hpp"
 #include <cmath>
 
-RayTracer::Sphere::Sphere(Math::Point3D _center, double _radius, Color _color)
+using namespace RayTracer;
+
+Sphere::Sphere(Math::Point3D _center, double _radius, Color _color)
     : center(_center), radius(_radius), color(_color) {}
 
-bool RayTracer::Sphere::hits(const RayTracer::Ray &ray) {
+bool Sphere::hits(const Ray &ray) const {
     Math::Vector3D oc = ray.origin - center;
     double a = ray.direction.dot(ray.direction);
     double b = 2 * oc.dot(ray.direction);
@@ -25,4 +27,12 @@ bool RayTracer::Sphere::hits(const RayTracer::Ray &ray) {
     double s1 = (-b - sqrtd) / (2.0 * a);
     double s2 = (-b + sqrtd) / (2.0 * a);
     return s1 >= 0.0 || s2 >= 0.0;
+}
+
+void Sphere::translate(const Math::Vector3D &v) {
+    center = center + v;
+}
+
+const Color &Sphere::getColor() const {
+    return color;
 }
