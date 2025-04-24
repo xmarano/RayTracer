@@ -4,16 +4,19 @@
 ** File description:
 ** DirectionalLight.hpp
 */
-
 #pragma once
+#include "ILight.hpp"
 #include "Math3D.hpp"
 
-// namespace RayTracer {
-//     class DirectionalLight {
-//     public:
-//         Math::Vector3D direction;
-//         float intensity;
+namespace RayTracer {
+    class DirectionalLight : public ILight {
+    public:
+        DirectionalLight(const Math::Vector3D &direction, float intensity);
 
-//         DirectionalLight(Math::Vector3D dir = {0, -1, 0}, float i = 1.0f) : direction(dir), intensity(i) {}
-//     };
-// }
+        Color illuminate(const Ray &ray, const IPrimitive &object, const Math::Point3D &point) const override;
+
+    private:
+        Math::Vector3D _direction;
+        float _intensity;
+    };
+}

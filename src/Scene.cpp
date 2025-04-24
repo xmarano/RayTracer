@@ -4,25 +4,41 @@
 ** File description:
 ** Scene.cpp
 */
-
 #include "../include/Scene.hpp"
 
-// using namespace RayTracer;
+RayTracer::Scene::Scene() noexcept
+    : _objects(), _lights(), _ambient(nullptr)
+{}
 
-// Scene::Scene() : ambient(0.1f) {}
+void RayTracer::Scene::addObject(std::shared_ptr<RayTracer::IPrimitive> obj)
+{
+    _objects.push_back(std::move(obj));
+}
 
-// void Scene::addObject(std::shared_ptr<IPrimitive> obj) {
-//     objects.push_back(obj);
-// }
+void RayTracer::Scene::addLight(std::unique_ptr<RayTracer::ILight> light)
+{
+    _lights.push_back(std::move(light));
+}
 
-// void Scene::addDirectionalLight(const DirectionalLight &light) {
-//     directionalLights.push_back(light);
-// }
+void RayTracer::Scene::setAmbientLight(std::unique_ptr<RayTracer::ILight> light)
+{
+    _ambient = std::move(light);
+}
 
-// void Scene::setAmbientLight(const AmbientLight &light) {
-//     ambient = light;
-// }
+const std::vector<std::shared_ptr<RayTracer::IPrimitive> >&
+RayTracer::Scene::getObjects() const
+{
+    return _objects;
+}
 
-// void Scene::setCamera(const Camera &cam) {
-//     camera = cam;
-// }
+const std::vector<std::unique_ptr<RayTracer::ILight> >&
+RayTracer::Scene::getLights() const
+{
+    return _lights;
+}
+
+const std::unique_ptr<RayTracer::ILight>&
+RayTracer::Scene::getAmbient() const
+{
+    return _ambient;
+}

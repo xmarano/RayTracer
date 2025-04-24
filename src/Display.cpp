@@ -26,7 +26,6 @@ void Display::parseFile(const std::string& filename)
     if (!in || _width <= 0 || _height <= 0 || _maxval <= 0)
         throw RayTracerException("Error: invalid PPM header");
 
-    // buffer
     _pixels.clear();
     _pixels.reserve(_width * _height);
 

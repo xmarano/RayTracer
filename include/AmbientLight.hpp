@@ -4,14 +4,18 @@
 ** File description:
 ** AmbientLight.hpp
 */
-
 #pragma once
+#include "ILight.hpp"
 
 namespace RayTracer {
-    class AmbientLight {
+    class AmbientLight : public ILight {
     public:
-        float intensity;
+        explicit AmbientLight(float intensity);
 
-        AmbientLight(float i = 0.1f) : intensity(i) {}
+        Color illuminate(const Ray &ray, const IPrimitive &object, const Math::Point3D &point) const override;
+
+    private:
+        float _intensity;
     };
 }
+
