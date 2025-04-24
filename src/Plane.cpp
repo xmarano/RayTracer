@@ -5,29 +5,27 @@
 ** Plane.cpp
 */
 
-
 #include "../include/Plane.hpp"
 #include <cmath>
 
-using namespace RayTracer;
+RayTracer::Plane::Plane(const Math::Point3D &point, const Math::Vector3D &normal, std::shared_ptr<IMaterial> material)
+    : _point(point),
+      _normal(normal),
+      _material(std::move(material))
+{}
 
-Plane::Plane(Math::Point3D _point, Math::Vector3D _normal, Color _color)
-    : point(_point), normal(_normal), color(_color) {}
-
-bool Plane::hits(const Ray &ray) const {
-    double denom = normal.dot(ray.direction);
-    if (std::abs(denom) < 1e-6)
+bool RayTracer::Plane::hits(const Ray &ray) const {
+    double denom = _normal.dot(ray.direction);
+    if (std::abs(denom) < 1e-6) 
         return false;
-
-    double t = (point - ray.origin).dot(normal) / denom;
-    return t >= 0;
+    double t = (_point - ray.origin).dot(_normal) / denom;
+    return t >= 0.0;
 }
 
-void Plane::translate(const Math::Vector3D &v) {
-    point = point + v;
+void RayTracer::Plane::translate(const Math::Vector3D &v) {
+    _point = _point + v;
 }
 
-const Color &Plane::getColor() const {
-    return color;
+std::shared_ptr<RayTracer::IMaterial> RayTracer::Plane::getMaterial() const {
+    return _material;
 }
-

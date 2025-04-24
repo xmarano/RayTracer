@@ -4,17 +4,21 @@
 ** File description:
 ** Main.cpp
 */
+
 #include <iostream>
 #include <string>
 #include <memory>
-#include <utility> 
+#include <utility>
+
 #include "../include/Exception.hpp"
 #include "../include/Utils.hpp"
 #include "../include/Display.hpp"
 #include "../include/ConfigParser.hpp"
+#include "../include/Material.hpp"
 #include "../include/AmbientLight.hpp"
 #include "../include/DirectionalLight.hpp"
 #include "../include/Sphere.hpp"
+#include "../include/Camera.hpp"
 #include "../include/Scene.hpp"
 
 void ppm(const std::string &file)
@@ -41,7 +45,7 @@ int main(int argc, char **argv)
             throw RayTracerException("USAGE: ./raytracer <SCENE_FILE>");
 
         std::string file = argv[1];
-        int is_ppm = file.substr(file.find_last_of(".") + 1) == "ppm";
+        bool is_ppm = (file.substr(file.find_last_of('.') + 1) == "ppm");
         if (!is_ppm && !is_valid_cfg(file))
             throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
 
@@ -50,40 +54,67 @@ int main(int argc, char **argv)
             return 0;
         }
 
-        // Chargement scène
-        Config::Scene configScene = Config::parseScene(file);
-        std::cout << "Camera: "<< configScene.camera.width  << "×"<< configScene.camera.height << std::endl;
-        std::cout << "POS=(" << configScene.camera.position.x << "," << configScene.camera.position.y << "," << configScene.camera.position.z << ")\n";
-        std::cout << "ROT=(" << configScene.camera.rotation.x << "," << configScene.camera.rotation.y << "," << configScene.camera.rotation.z << ")\n";
-        std::cout << "FOV=" << configScene.camera.fieldOfView << std::endl;
+        // --- parse .cfg ---
+        Config::Scene cfg = Config::parseScene(file);
+        std::cout << "Camera: " << cfg.camera.width << "×" << cfg.camera.height << std::endl;
+        std::cout << "POS=("
+                  << cfg.camera.position.x << ","
+                  << cfg.camera.position.y << ","
+                  << cfg.camera.position.z << ")\n";
+        std::cout << "ROT=("
+                  << cfg.camera.rotation.x << ","
+                  << cfg.camera.rotation.y << ","
+                  << cfg.camera.rotation.z << ")\n";
+        std::cout << "FOV=" << cfg.camera.fieldOfView << std::endl;
 
-        // Initialisation scène réelle
+        // --- build scene ---
         RayTracer::Scene scene;
 
-        auto ambient = std::make_unique<RayTracer::AmbientLight>(0.2f);
-        scene.setAmbientLight(std::move(ambient));
+        // ambient light
+        auto ambientLight = std::make_unique<RayTracer::AmbientLight>(0.2f);
+        scene.setAmbientLight(std::move(ambientLight));
+
+        // directional light
         auto dirLight = std::make_unique<RayTracer::DirectionalLight>(
             Math::Vector3D(-1.0, -1.0, -1.0), 0.8f
         );
         scene.addLight(std::move(dirLight));
+
+        // --- flat-color material + sphere ---
+        auto material = std::make_shared<RayTracer::FlatColor>(Color(255, 100, 100));
+        std::cout << "Material base color = "
+                  << material->getBaseColor().r << " "
+                  << material->getBaseColor().g << " "
+                  << material->getBaseColor().b << std::endl;
+
         auto sphere = std::make_shared<RayTracer::Sphere>(
-            Math::Point3D(0, 0, -5), 1.0, Color(255, 100, 100)
+            Math::Point3D(0, 0, -5),
+            1.0,
+            material
         );
         scene.addObject(sphere);
-        Math::Point3D intersection(0, 0, -5);
-        RayTracer::Ray dummyRay(Math::Point3D(0, 0, 0), Math::Vector3D(0, 0, -1));
-        Color finalColor(0, 0, 0);
-        if (scene.getAmbient())
-            finalColor = scene.getAmbient()->illuminate(dummyRay, *sphere, intersection);
 
-        for (const auto &light : scene.getLights()) {
-            Color add = light->illuminate(dummyRay, *sphere, intersection);
-            finalColor.r = std::min(finalColor.r + add.r, 255);
-            finalColor.g = std::min(finalColor.g + add.g, 255);
-            finalColor.b = std::min(finalColor.b + add.b, 255);
+        // --- shoot a dummy ray at the sphere’s center ---
+        Math::Point3D intersection(0, 0, -5);
+        RayTracer::Ray ray(Math::Point3D(0, 0, 0), Math::Vector3D(0, 0, -1));
+
+        // accumulate ambient contribution
+        Color finalColor{0, 0, 0};
+        if (scene.getAmbient())
+            finalColor = scene.getAmbient()->illuminate(ray, *sphere, intersection);
+
+        // accumulate directional contributions
+        for (const auto &lightPtr : scene.getLights()) {
+            Color contrib = lightPtr->illuminate(ray, *sphere, intersection);
+            finalColor.r = std::min(finalColor.r + contrib.r, 255);
+            finalColor.g = std::min(finalColor.g + contrib.g, 255);
+            finalColor.b = std::min(finalColor.b + contrib.b, 255);
         }
 
-        std::cout << "Final color at point = " << finalColor.r << " " << finalColor.g << " " << finalColor.b << std::endl;
+        std::cout << "Final color at point = "
+                  << finalColor.r << " "
+                  << finalColor.g << " "
+                  << finalColor.b << std::endl;
 
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;

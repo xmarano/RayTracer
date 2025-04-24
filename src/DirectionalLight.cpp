@@ -4,14 +4,17 @@
 ** File description:
 ** DirectionalLight.cpp
 */
+
 #include "../include/DirectionalLight.hpp"
 #include <algorithm>
 
-RayTracer::DirectionalLight::DirectionalLight(const Math::Vector3D &direction, float intensity)
-    : _direction(direction), _intensity(intensity) {}
+RayTracer::DirectionalLight::DirectionalLight(const Math::Vector3D &direction, float intensity) : _direction(direction), _intensity(intensity)
+{}
 
-Color RayTracer::DirectionalLight::illuminate(const Ray &, const IPrimitive &object, const Math::Point3D &point) const {
-    Color base = object.getColor();
+Color RayTracer::DirectionalLight::illuminate(const Ray &, const IPrimitive &object, const Math::Point3D &point) const
+{
+    (void)point;
+    Color base = object.getBaseColor();
     return Color(
         static_cast<int>(std::clamp(base.r * _intensity, 0.0f, 255.0f)),
         static_cast<int>(std::clamp(base.g * _intensity, 0.0f, 255.0f)),

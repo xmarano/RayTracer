@@ -4,25 +4,23 @@
 ** File description:
 ** Sphere.hpp
 */
-
-
 #pragma once
-
+#include <memory>
 #include "IPrimitive.hpp"
-
 namespace RayTracer {
+class Sphere : public IPrimitive {
+public:
+    Sphere(const Math::Point3D &center,
+           double radius,
+           std::shared_ptr<IMaterial> material);
+    ~Sphere() override = default;
+    bool hits(const Ray &ray) const override;
+    void translate(const Math::Vector3D &v) override;
+    std::shared_ptr<IMaterial> getMaterial() const override;
 
-    class Sphere : public IPrimitive {
-    public:
-        Math::Point3D center;
-        double radius;
-        Color color;
-
-        Sphere(Math::Point3D center, double radius, Color color);
-
-        bool hits(const Ray &ray) const override;
-        void translate(const Math::Vector3D &v) override;
-        const Color &getColor() const override;
-    };
+private:
+    Math::Point3D              _center;
+    double                     _radius;
+    std::shared_ptr<IMaterial> _material;
+};
 }
-

@@ -4,20 +4,25 @@
 ** File description:
 ** IPrimitive.hpp
 */
-
 #pragma once
+
+#include <memory>
 #include "Math3D.hpp"
 #include "Ray.hpp"
 #include "Color.hpp"
+#include "Material.hpp"
 
 namespace RayTracer {
+class IMaterial;
+class IPrimitive {
+public:
+    virtual ~IPrimitive() = default;
+    virtual bool hits(const Ray &ray) const = 0;
+    virtual void translate(const Math::Vector3D &v) = 0;
+    virtual std::shared_ptr<IMaterial> getMaterial() const = 0;
 
-    class IPrimitive {
-    public:
-        virtual ~IPrimitive() = default;
-
-        virtual bool hits(const Ray &ray) const = 0;
-        virtual void translate(const Math::Vector3D &v) = 0;
-        virtual const Color &getColor() const = 0;
-    };
+    Color getBaseColor() const {
+        return getMaterial()->getBaseColor();
+    }
+};
 }

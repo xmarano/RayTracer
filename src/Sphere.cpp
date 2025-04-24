@@ -8,29 +8,29 @@
 #include "../include/Sphere.hpp"
 #include <cmath>
 
-RayTracer::Sphere::Sphere(Math::Point3D _center, double _radius, Color _color)
-    : center(_center), radius(_radius), color(_color) {}
+RayTracer::Sphere::Sphere(const Math::Point3D &center, double radius, std::shared_ptr<IMaterial> material)
+    : _center(center),
+      _radius(radius),
+      _material(std::move(material))
+{}
 
 bool RayTracer::Sphere::hits(const Ray &ray) const {
-    Math::Vector3D oc = ray.origin - center;
+    Math::Vector3D oc = ray.origin - _center;
     double a = ray.direction.dot(ray.direction);
     double b = 2 * oc.dot(ray.direction);
-    double c = oc.dot(oc) - radius * radius;
-
-    double delta = b*b - 4*a*c;
-    if (delta < 0.0)
-        return false;
-
-    double sqrtd = std::sqrt(delta);
-    double s1 = (-b - sqrtd) / (2.0 * a);
-    double s2 = (-b + sqrtd) / (2.0 * a);
-    return s1 >= 0.0 || s2 >= 0.0;
+    double c = oc.dot(oc) - _radius * _radius;
+    double delta = b * b - 4 * a * c;
+    if (delta < 0.0) return false;
+    double sq = std::sqrt(delta);
+    double t1 = (-b - sq) / (2 * a);
+    double t2 = (-b + sq) / (2 * a);
+    return (t1 >= 0.0) || (t2 >= 0.0);
 }
 
 void RayTracer::Sphere::translate(const Math::Vector3D &v) {
-    center = center + v;
+    _center = _center + v;
 }
 
-const Color &RayTracer::Sphere::getColor() const {
-    return color;
+std::shared_ptr<RayTracer::IMaterial> RayTracer::Sphere::getMaterial() const {
+    return _material;
 }
