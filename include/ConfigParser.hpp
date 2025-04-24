@@ -17,13 +17,6 @@
 
 namespace Config {
 
-    // class Color {
-    //     public:
-    //         int r, g, b;
-    //         Color(): r(0), g(0), b(0) {}
-    //         Color(int rr, int gg, int bb): r(rr), g(gg), b(bb) {}
-    // };
-
     class Camera {
         public:
             int width;
@@ -51,18 +44,18 @@ namespace Config {
             Plane() : axis('Z'), position(0.0), color() {}
     };
 
-    // class PointLight {
-    //     public:
-    //         Math::Point3D position;
-    //         Color color;
-    //         PointLight(): position(), color() {}
-    // };
+    class Point {
+        public:
+            Math::Point3D position;
+            Color color;
+            Point(): position(), color() {}
+    };
 
-    // class DirLight {
+    // class Directional {
     //     public:
     //         Math::Vector3D direction;
     //         Color color;
-    //         DirLight(): direction(), color() {}
+    //         Directional(): direction(), color() {}
     // };
 
     class Scene {
@@ -70,10 +63,10 @@ namespace Config {
             Camera camera;
             std::vector<Sphere> spheres;
             std::vector<Plane> planes;
-            // double ambient;
-            // double diffuse;
-            // std::vector<PointLight> points;
-            // std::vector<DirLight> directionals;
+            double ambient;
+            double diffuse;
+            std::vector<Point> points;
+            // std::vector<Directional> directionals;
 
             // Scene(): ambient(0.0), diffuse(0.0) {}
     };

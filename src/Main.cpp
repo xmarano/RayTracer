@@ -38,6 +38,7 @@ void tmp_config(Config::Scene configScene)
     std::cout << "position=(" << configScene.camera.position.x << "," << configScene.camera.position.y << "," << configScene.camera.position.z << ")\n";
     std::cout << "rotation=(" << configScene.camera.rotation.x << "," << configScene.camera.rotation.y << "," << configScene.camera.rotation.z << ")\n";
     std::cout << "fieldOfView=" << configScene.camera.fieldOfView << std::endl;
+    std::cout << std::endl;
     // primitives
         // spheres
     std::cout << "SPHERES:\n";
@@ -53,6 +54,24 @@ void tmp_config(Config::Scene configScene)
                   << "\tposition=" << p.position
                   << "\tcouleur=(" << p.color.r  << "," << p.color.g << "," << p.color.b << ")" << std::endl;
     }
+    std::cout << std::endl;
+    // lights
+    std::cout << "LIGHTS:" << std::endl;
+        // ambient
+    std::cout << "ambient=" << configScene.ambient << std::endl;
+        // diffuse
+    std::cout << "diffuse=" << configScene.diffuse << std::endl;
+        // point
+    std::cout << "point=";
+    for (const auto &p : configScene.points) {
+        std::cout << "position=(" << p.position.x << "," << p.position.y << "," << p.position.z << ")"<< std::endl;
+    }
+        // directional
+    // std::cout << "directional:\n";
+    // for (const auto &d : configScene.directionals) {
+    //     std::cout << "direction=(" << d.direction.x << "," << d.direction.y << "," << d.direction.z << ")"
+    //               << "\tcouleur=(" << d.color.r  << "," << d.color.g  << "," << d.color.b  << ")" << std::endl;
+    // }
 }
 
 int main(int argc, char **argv)
