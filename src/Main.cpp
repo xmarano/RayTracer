@@ -30,6 +30,31 @@ void ppm(const std::string &file)
     display.run();
 }
 
+void tmp_config(Config::Scene configScene)
+{
+    // camera
+    std::cout << "CAMERA:\n";
+    std::cout << "resolution: "<< configScene.camera.width  << "×"<< configScene.camera.height << std::endl;
+    std::cout << "position=(" << configScene.camera.position.x << "," << configScene.camera.position.y << "," << configScene.camera.position.z << ")\n";
+    std::cout << "rotation=(" << configScene.camera.rotation.x << "," << configScene.camera.rotation.y << "," << configScene.camera.rotation.z << ")\n";
+    std::cout << "fieldOfView=" << configScene.camera.fieldOfView << std::endl;
+    // primitives
+        // spheres
+    std::cout << "SPHERES:\n";
+    for (const auto &s : configScene.spheres) {
+        std::cout << "centre=(" << s.center.x << "," << s.center.y << "," << s.center.z << ")"
+                  << "\trayon=" << s.radius
+                  << "\tcouleur=(" << s.color.r  << "," << s.color.g  << "," << s.color.b  << ")" << std::endl;
+    }
+        // planes
+    std::cout << "PLANES:\n";
+    for (const auto &p : configScene.planes) {
+        std::cout << "axe=" << p.axis
+                  << "\tposition=" << p.position
+                  << "\tcouleur=(" << p.color.r  << "," << p.color.g << "," << p.color.b << ")" << std::endl;
+    }
+}
+
 int main(int argc, char **argv)
 {
     if (argc == 2 && std::string(argv[1]) == "unitest")
@@ -54,18 +79,10 @@ int main(int argc, char **argv)
             return 0;
         }
 
-        // --- parse .cfg ---
-        Config::Scene cfg = Config::parseScene(file);
-        std::cout << "Camera: " << cfg.camera.width << "×" << cfg.camera.height << std::endl;
-        std::cout << "POS=("
-                  << cfg.camera.position.x << ","
-                  << cfg.camera.position.y << ","
-                  << cfg.camera.position.z << ")\n";
-        std::cout << "ROT=("
-                  << cfg.camera.rotation.x << ","
-                  << cfg.camera.rotation.y << ","
-                  << cfg.camera.rotation.z << ")\n";
-        std::cout << "FOV=" << cfg.camera.fieldOfView << std::endl;
+        // Chargement scène
+        Config::Scene configScene = Config::parseScene(file);
+        tmp_config(configScene);
+        std::cout << "---------" << std::endl;
 
         // --- build scene ---
         RayTracer::Scene scene;

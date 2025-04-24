@@ -4,38 +4,36 @@
 ## File description:
 ## Makefile
 ##
-NAME       = raytracer
+NAME		= raytracer
 
-CXX        = g++
-CXXFLAGS   = -std=c++17 -Wall -Wextra -Iinclude
+FLAGS		= -std=c++17 -Wall -Wextra -Iinclude
+LDFLAGS		= -L/opt/homebrew/lib -lconfig++
+SFML		= -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-LDFLAGS    = -L/opt/homebrew/lib -lconfig++
-SFML       = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+SRC			= src/Main.cpp \
+				src/ConfigParser.cpp \
+				src/Display.cpp \
+				src/Ray.cpp \
+				src/Sphere.cpp \
+				src/Plane.cpp \
+				src/DirectionalLight.cpp \
+				src/Camera.cpp \
+				src/Scene.cpp \
+				src/Material.cpp \
+				src/Utils.cpp \
+				src/Math3D.cpp \
+				src/AmbientLight.cpp
 
-SRC        = src/Main.cpp \
-             src/ConfigParser.cpp \
-             src/Display.cpp \
-             src/Ray.cpp \
-             src/Sphere.cpp \
-             src/Plane.cpp \
-             src/DirectionalLight.cpp \
-             src/Camera.cpp \
-             src/Scene.cpp \
-             src/Material.cpp \
-             src/Utils.cpp \
-             src/Math3D.cpp \
-             src/AmbientLight.cpp
+OBJ			= $(SRC:.cpp=.o)
 
-OBJ        = $(SRC:.cpp=.o)
+TEST_SRC	= criterion.cpp
+TEST_NAME	= unitests
 
-TEST_SRC   = criterion.cpp
-TEST_NAME  = unitests
-
-OS         := $(shell uname -s)
+OS			:= $(shell uname -s)
 ifeq ($(OS), Darwin)
-	T1         = -I /opt/homebrew/opt/criterion/include
-	T2         = -L /opt/homebrew/opt/criterion/lib
-	T3         = -lcriterion -Wno-deprecated-declarations -Wno-unused-parameter
+	T1		= -I /opt/homebrew/opt/criterion/include
+	T2		= -L /opt/homebrew/opt/criterion/lib
+	T3		= -lcriterion -Wno-deprecated-declarations -Wno-unused-parameter
 	TEST_FLAGS = $(T1) $(T2) $(T3)
 else
 	TEST_FLAGS = -lcriterion
@@ -44,14 +42,14 @@ endif
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME) $(SFML) $(LDFLAGS)
+	g++ $(FLAGS) $(OBJ) -o $(NAME) $(SFML) $(LDFLAGS)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	g++ $(FLAGS) -c $< -o $@
 
 tests_run: re
 	@echo "---------- Running tests on $(OS) ----------"
-	$(CXX) $(CXXFLAGS) $(TEST_SRC) $(OBJ) -o $(TEST_NAME) $(TEST_FLAGS) $(SFML) $(LDFLAGS) --coverage
+	g++ $(FLAGS) $(TEST_SRC) $(OBJ) -o $(TEST_NAME) $(TEST_FLAGS) $(SFML) $(LDFLAGS) --coverage
 	./$(TEST_NAME) unitest
 	@echo "---------- COVERAGE ----------"
 	gcovr > coverage.txt

@@ -11,6 +11,7 @@
 #include </usr/include/libconfig.h++>
 #endif
 #include "Math3D.hpp"
+#include "Color.hpp"
 
 #pragma once
 
@@ -34,21 +35,21 @@ namespace Config {
             Camera() : width(0), height(0) , position(), rotation() , fieldOfView(0.0) {}
     };
 
-    // class Sphere {
-    //     public:
-    //         Math::Point3D center;
-    //         double radius;
-    //         Color color;
-    //         Sphere() : center(), radius(0.0), color() {}
-    // };
+    class Sphere {
+        public:
+            Math::Point3D center;
+            double radius;
+            Color color;
+            Sphere() : center(), radius(0.0), color() {}
+    };
 
-    // class Plane {
-    //     public:
-    //         char axis;
-    //         double position;
-    //         Color color;
-    //         Plane() : axis('Z'), position(0.0), color() {}
-    // };
+    class Plane {
+        public:
+            char axis;
+            double position;
+            Color color;
+            Plane() : axis('Z'), position(0.0), color() {}
+    };
 
     // class PointLight {
     //     public:
@@ -67,8 +68,8 @@ namespace Config {
     class Scene {
         public:
             Camera camera;
-            // std::vector<Sphere> spheres;
-            // std::vector<Plane> planes;
+            std::vector<Sphere> spheres;
+            std::vector<Plane> planes;
             // double ambient;
             // double diffuse;
             // std::vector<PointLight> points;
