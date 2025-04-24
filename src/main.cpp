@@ -106,6 +106,23 @@ int main(int argc, char **argv)
         // --- build scene ---
         RayTracer::Scene scene;
 
+        //setCamera
+        float aspectRatio = static_cast<float>(configScene.camera.width) / configScene.camera.height;
+        float fov = configScene.camera.fieldOfView;
+        float scale = std::tan((fov * 0.5) * M_PI / 180.0);
+
+        Math::Vector3D bottomSide = {2.0 * scale * aspectRatio, 0, 0};
+        Math::Vector3D leftSide = {0, 2.0 * scale, 0};
+        Math::Point3D screenOrigin = {
+            configScene.camera.position.x - bottomSide.x / 2,
+            configScene.camera.position.y - leftSide.y / 2,
+            configScene.camera.position.z - 1
+        };
+
+        RayTracer::Rectangle3D screen(screenOrigin, bottomSide, leftSide);
+        RayTracer::Camera camera(configScene.camera.position, screen);
+        scene.setCamera(camera);
+
         // ambient light
         auto ambientLight = std::make_unique<RayTracer::AmbientLight>(0.2f);
         scene.setAmbientLight(std::move(ambientLight));

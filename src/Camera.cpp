@@ -13,7 +13,7 @@ RayTracer::Rectangle3D::Rectangle3D(): origin(), bottom_side(), left_side()
 RayTracer::Rectangle3D::Rectangle3D(Math::Point3D o, Math::Vector3D bs, Math::Vector3D ls) : origin(o), bottom_side(bs), left_side(ls)
 {}
 
-Math::Point3D RayTracer::Rectangle3D::pointAt(double u, double v) const { 
+Math::Point3D RayTracer::Rectangle3D::pointAt(double u, double v) const {
     return origin + (bottom_side * u) + (left_side * v);
 }
 

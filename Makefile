@@ -10,7 +10,7 @@ FLAGS		= -std=c++17 -Wall -Wextra -Iinclude
 LDFLAGS		= -L/opt/homebrew/lib -lconfig++
 SFML		= -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-SRC			= src/Main.cpp \
+SRC			= src/main.cpp \
 				src/ConfigParser.cpp \
 				src/Display.cpp \
 				src/Ray.cpp \

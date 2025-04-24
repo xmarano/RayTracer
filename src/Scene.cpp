@@ -42,3 +42,13 @@ RayTracer::Scene::getAmbient() const
 {
     return _ambient;
 }
+
+void RayTracer::Scene::setCamera(const Camera &cam)
+{
+    _camera = cam;
+}
+
+const RayTracer::Camera& RayTracer::Scene::getCamera() const
+{
+    return _camera;
+}

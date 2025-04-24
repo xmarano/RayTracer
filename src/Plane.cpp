@@ -16,7 +16,7 @@ RayTracer::Plane::Plane(const Math::Point3D &point, const Math::Vector3D &normal
 
 bool RayTracer::Plane::hits(const Ray &ray) const {
     double denom = _normal.dot(ray.direction);
-    if (std::abs(denom) < 1e-6) 
+    if (std::abs(denom) < 1e-6)
         return false;
     double t = (_point - ray.origin).dot(_normal) / denom;
     return t >= 0.0;
