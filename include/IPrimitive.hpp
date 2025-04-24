@@ -10,7 +10,7 @@
 #include "Math3D.hpp"
 #include "Ray.hpp"
 #include "Color.hpp"
-#include "Material.hpp"
+#include "IMaterial.hpp"
 
 namespace RayTracer {
 class IMaterial;

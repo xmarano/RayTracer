@@ -14,7 +14,7 @@
 #include "../include/Utils.hpp"
 #include "../include/Display.hpp"
 #include "../include/ConfigParser.hpp"
-#include "../include/Material.hpp"
+#include "../include/IMaterial.hpp"
 #include "../include/AmbientLight.hpp"
 #include "../include/DirectionalLight.hpp"
 #include "../include/Sphere.hpp"

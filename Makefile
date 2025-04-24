@@ -22,7 +22,9 @@ SRC			= src/main.cpp \
 				src/Material.cpp \
 				src/Utils.cpp \
 				src/Math3D.cpp \
-				src/AmbientLight.cpp
+				src/AmbientLight.cpp \
+				src/Cone.cpp \
+				src/Cylinder.cpp
 
 OBJ			= $(SRC:.cpp=.o)
 
