@@ -24,12 +24,14 @@ namespace RayTracer {
 
         bool hits(const Ray &ray) const override;
         void translate(const Math::Vector3D &v) override;
+        void rotate(const Math::Vector3D &axis, double angleDegrees) override;
         std::shared_ptr<IMaterial> getMaterial() const override;
 
     private:
         Math::Point3D _baseCenter;
         double _radius;
         double _height;
+        Math::Vector3D _axis;
         std::shared_ptr<IMaterial> _material;
     };
 

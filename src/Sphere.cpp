@@ -31,6 +31,10 @@ void RayTracer::Sphere::translate(const Math::Vector3D &v) {
     _center = _center + v;
 }
 
+void RayTracer::Sphere::rotate(const Math::Vector3D &, double)
+{
+}
+
 std::shared_ptr<RayTracer::IMaterial> RayTracer::Sphere::getMaterial() const {
     return _material;
 }

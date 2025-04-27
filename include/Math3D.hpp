@@ -44,4 +44,5 @@ namespace Math {
         Vector3D operator-(const Point3D &p) const;
     };
 
+    Vector3D rotateVector(const Vector3D &v, const Vector3D &axis, double angleDegrees);
 }

@@ -19,6 +19,7 @@ public:
     virtual ~IPrimitive() = default;
     virtual bool hits(const Ray &ray) const = 0;
     virtual void translate(const Math::Vector3D &v) = 0;
+    virtual void rotate(const Math::Vector3D &axis, double angleDegrees) = 0;
     virtual std::shared_ptr<IMaterial> getMaterial() const = 0;
 
     Color getBaseColor() const {

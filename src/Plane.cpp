@@ -26,6 +26,11 @@ void RayTracer::Plane::translate(const Math::Vector3D &v) {
     _point = _point + v;
 }
 
+void RayTracer::Plane::rotate(const Math::Vector3D &axis, double angleDegrees)
+{
+    _normal = Math::rotateVector(_normal, axis, angleDegrees);
+}
+
 std::shared_ptr<RayTracer::IMaterial> RayTracer::Plane::getMaterial() const {
     return _material;
 }

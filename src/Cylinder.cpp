@@ -47,6 +47,11 @@ void RayTracer::Cylinder::translate(const Math::Vector3D &v) {
     _baseCenter = _baseCenter + v;
 }
 
+void RayTracer::Cylinder::rotate(const Math::Vector3D &axis, double angleDegrees)
+{
+    _axis = Math::rotateVector(_axis, axis, angleDegrees);
+}
+
 std::shared_ptr<RayTracer::IMaterial> RayTracer::Cylinder::getMaterial() const {
     return _material;
 }

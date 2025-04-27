@@ -55,6 +55,11 @@ void RayTracer::Cone::translate(const Math::Vector3D &v) {
     _apex = _apex + v;
 }
 
+void RayTracer::Cone::rotate(const Math::Vector3D &axis, double angleDegrees)
+{
+    _axis = Math::rotateVector(_axis, axis, angleDegrees);
+}
+
 std::shared_ptr<RayTracer::IMaterial> RayTracer::Cone::getMaterial() const {
     return _material;
 }
