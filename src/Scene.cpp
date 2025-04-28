@@ -1,13 +1,12 @@
 /*
-** EPITECH PROJECT, 2024
+** EPITECH PROJECT, 2025
 ** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
 ** Scene.cpp
 */
 #include "../include/Scene.hpp"
 
-RayTracer::Scene::Scene() noexcept
-    : _objects(), _lights(), _ambient(nullptr)
+RayTracer::Scene::Scene() noexcept : _objects(), _lights(), _ambient(nullptr)
 {}
 
 void RayTracer::Scene::addObject(std::shared_ptr<RayTracer::IPrimitive> obj)
@@ -25,20 +24,17 @@ void RayTracer::Scene::setAmbientLight(std::unique_ptr<RayTracer::ILight> light)
     _ambient = std::move(light);
 }
 
-const std::vector<std::shared_ptr<RayTracer::IPrimitive> >&
-RayTracer::Scene::getObjects() const
+const std::vector<std::shared_ptr<RayTracer::IPrimitive> >& RayTracer::Scene::getObjects() const
 {
     return _objects;
 }
 
-const std::vector<std::unique_ptr<RayTracer::ILight> >&
-RayTracer::Scene::getLights() const
+const std::vector<std::unique_ptr<RayTracer::ILight> >& RayTracer::Scene::getLights() const
 {
     return _lights;
 }
 
-const std::unique_ptr<RayTracer::ILight>&
-RayTracer::Scene::getAmbient() const
+const std::unique_ptr<RayTracer::ILight>& RayTracer::Scene::getAmbient() const
 {
     return _ambient;
 }

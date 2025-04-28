@@ -1,5 +1,5 @@
 ##
-## EPITECH PROJECT, 2024
+## EPITECH PROJECT, 2025
 ## B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ## File description:
 ## Makefile
@@ -63,7 +63,7 @@ clean:
 	rm -f $(OBJ)
 
 fclean: clean
-	rm -f $(NAME) $(TEST_NAME) coverage.txt
+	rm -f $(NAME) $(TEST_NAME) coverage.txt toto.ppm
 
 re: fclean all
 

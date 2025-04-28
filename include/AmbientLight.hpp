@@ -1,21 +1,21 @@
 /*
-** EPITECH PROJECT, 2024
+** EPITECH PROJECT, 2025
 ** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
 ** AmbientLight.hpp
 */
-#pragma once
 #include "ILight.hpp"
+
+#pragma once
 
 namespace RayTracer {
     class AmbientLight : public ILight {
-    public:
-        explicit AmbientLight(float intensity);
+        public:
+            explicit AmbientLight(float intensity);
 
-        Color illuminate(const Ray &ray, const IPrimitive &object, const Math::Point3D &point) const override;
+            Color illuminate(const Ray &ray, const IPrimitive &object, const Math::Point3D &point) const override;
 
-    private:
-        float _intensity;
+        private:
+            float _intensity;
     };
 }
-

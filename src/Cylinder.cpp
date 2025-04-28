@@ -1,25 +1,18 @@
 /*
-** EPITECH PROJECT, 2024
+** EPITECH PROJECT, 2025
 ** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
 ** Cylinder.cpp
 */
-
-/*
-** EPITECH PROJECT, 2024
-** Raytracer
-** File description:
-** Cylinder.cpp
-*/
-
 #include "../include/Cylinder.hpp"
 #include <cmath>
 
-RayTracer::Cylinder::Cylinder(const Math::Point3D &baseCenter, double radius,
-        double height, std::shared_ptr<RayTracer::IMaterial> material)
-    : _baseCenter(baseCenter), _radius(radius), _height(height), _material(std::move(material)) {}
+RayTracer::Cylinder::Cylinder(const Math::Point3D &baseCenter, double radius, double height, std::shared_ptr<RayTracer::IMaterial> material)
+    : _baseCenter(baseCenter), _radius(radius), _height(height), _material(std::move(material))
+{}
 
-bool RayTracer::Cylinder::hits(const RayTracer::Ray &ray) const {
+bool RayTracer::Cylinder::hits(const RayTracer::Ray &ray) const
+{
 
     Math::Vector3D d = ray.direction;
     Math::Vector3D oc = ray.origin - _baseCenter;
@@ -43,7 +36,8 @@ bool RayTracer::Cylinder::hits(const RayTracer::Ray &ray) const {
            (t2 >= 0.0 && z2 >= _baseCenter.z && z2 <= _baseCenter.z + _height);
 }
 
-void RayTracer::Cylinder::translate(const Math::Vector3D &v) {
+void RayTracer::Cylinder::translate(const Math::Vector3D &v)
+{
     _baseCenter = _baseCenter + v;
 }
 
@@ -52,7 +46,7 @@ void RayTracer::Cylinder::rotate(const Math::Vector3D &axis, double angleDegrees
     _axis = Math::rotateVector(_axis, axis, angleDegrees);
 }
 
-std::shared_ptr<RayTracer::IMaterial> RayTracer::Cylinder::getMaterial() const {
+std::shared_ptr<RayTracer::IMaterial> RayTracer::Cylinder::getMaterial() const
+{
     return _material;
 }
-

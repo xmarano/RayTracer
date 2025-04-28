@@ -1,5 +1,5 @@
 /*
-** EPITECH PROJECT, 2024
+** EPITECH PROJECT, 2025
 ** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
 ** Main.cpp
@@ -90,11 +90,8 @@ void Main::renderPPM(const Config::Scene &cfg)
 {
     RayTracer::Scene scene;
 
-    // Camera setup
-    float aspect = static_cast<float>(cfg.camera.width)
-                 /  cfg.camera.height;
-    float scale  = std::tan((cfg.camera.fieldOfView * 0.5f)
-                    * M_PI / 180.0f);
+    float aspect = static_cast<float>(cfg.camera.width) /  cfg.camera.height;
+    float scale  = std::tan((cfg.camera.fieldOfView * 0.5f) * M_PI / 180.0f);
     Math::Vector3D bs{2.0f * scale * aspect, 0.0f, 0.0f};
     Math::Vector3D ls{0.0f, 2.0f * scale, 0.0f};
     Math::Point3D origin{
@@ -102,6 +99,7 @@ void Main::renderPPM(const Config::Scene &cfg)
         cfg.camera.position.y - ls.y * 0.5f,
         cfg.camera.position.z - 1.0f
     };
+    // Camera setup
     scene.setCamera(
         RayTracer::Camera(
             cfg.camera.position,
@@ -124,7 +122,7 @@ void Main::renderPPM(const Config::Scene &cfg)
         );
     }
 
-    // Primitives
+    // Primitives setup
     for (const auto &s : cfg.spheres) {
         scene.addObject(
             std::make_shared<RayTracer::Sphere>(
@@ -135,6 +133,7 @@ void Main::renderPPM(const Config::Scene &cfg)
         );
     }
 
+    // Planes setup
     for (const auto &p : cfg.planes) {
         Math::Vector3D normal{0.0f, 0.0f, 0.0f};
         if (p.axis == 'X') normal.x = 1.0f;
