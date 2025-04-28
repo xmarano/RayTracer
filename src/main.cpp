@@ -199,13 +199,15 @@ int main(int argc, char **argv)
         std::string file;
         bool isPPM, isDebug = false;
         main.parseArguments(argc, argv, file, isPPM, isDebug);
-
-        auto cfg = Config::parseScene(file);
-
+        
         if (isPPM) {
             main.ppm(file);
             return 0;
-        } else if (isDebug) {
+        }
+
+        auto cfg = Config::parseScene(file);
+
+        if (isDebug) {
             main.debug_config(cfg);
             return 0;
         }
