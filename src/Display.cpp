@@ -44,7 +44,7 @@ void Display::init()
 
     for (int y = 0; y < _height; ++y) {
         for (int x = 0; x < _width; ++x) {
-            const Pixel& p = _pixels[y * _width + x];
+            const Pixel &p = _pixels[y * _width + x];
             image.setPixel(x, y, sf::Color(p.r, p.g, p.b));
         }
     }
@@ -66,6 +66,8 @@ void Display::run()
         sf::Event ev;
         while (_window.pollEvent(ev))
             if (ev.type == sf::Event::Closed)
+                _window.close();
+            else if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Enter)
                 _window.close();
 
         _window.clear();
