@@ -29,6 +29,9 @@ namespace RayTracer {
         const std::vector<std::shared_ptr<IPrimitive>> &getObjects() const;
         const std::vector<std::unique_ptr<ILight>> &getLights() const;
         const std::unique_ptr<ILight> &getAmbient() const;
+        
+        void addPrimitiveByType(const std::string &type);
+
 
     private:
         std::vector<std::shared_ptr<IPrimitive>> _objects;

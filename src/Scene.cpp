@@ -5,6 +5,7 @@
 ** Scene.cpp
 */
 #include "../include/Scene.hpp"
+#include "../include/PrimitiveFactory.hpp"
 
 RayTracer::Scene::Scene() noexcept
     : _objects(), _lights(), _ambient(nullptr)
@@ -52,3 +53,13 @@ const RayTracer::Camera& RayTracer::Scene::getCamera() const
 {
     return _camera;
 }
+
+void RayTracer::Scene::addPrimitiveByType(const std::string &type)
+{
+    try {
+        auto primitive = RayTracer::PrimitiveFactory::createPrimitive(type);
+        addObject(primitive);
+    } catch (const std::exception &e) {
+    }
+}
+
