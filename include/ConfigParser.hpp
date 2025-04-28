@@ -5,6 +5,7 @@
 ** OOP
 */
 #include <vector>
+#include <limits>
 #ifdef __APPLE__
 #include </opt/homebrew/include/libconfig.h++>
 #elif __linux__
@@ -47,16 +48,14 @@ namespace Config {
     class Point {
         public:
             Math::Point3D position;
-            Color color;
-            Point(): position(), color() {}
+            Point(): position() {}
     };
 
-    // class Directional {
-    //     public:
-    //         Math::Vector3D direction;
-    //         Color color;
-    //         Directional(): direction(), color() {}
-    // };
+    class Directional {
+        public:
+            Math::Vector3D direction;
+            Directional(): direction() {}
+    };
 
     class Scene {
         public:
@@ -66,7 +65,7 @@ namespace Config {
             double ambient;
             double diffuse;
             std::vector<Point> points;
-            // std::vector<Directional> directionals;
+            std::vector<Directional> directionals;
 
             // Scene(): ambient(0.0), diffuse(0.0) {}
     };

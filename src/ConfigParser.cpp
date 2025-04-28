@@ -102,26 +102,19 @@ Config::Scene Config::parseScene(const std::string &file)
             scene.points.push_back(p);
         }
 
-        // // directional
-        // const libconfig::Setting &directionals = cfg.lookup("lights.directional");
-        // for (int i = 0; i < directionals.getLength(); ++i) {
-        //     const libconfig::Setting &config_directional = directionals[i];
-        //     Config::Directional d;
+        // directional
+        const libconfig::Setting &directionals = cfg.lookup("lights.directional");
+        for (int i = 0; i < directionals.getLength(); ++i) {
+            const libconfig::Setting &config_directional = directionals[i];
+            Config::Directional d;
     
-        //     // direction
-        //     d.direction.x = config_directional.lookup("x");
-        //     d.direction.y = config_directional.lookup("y");
-        //     d.direction.z = config_directional.lookup("z");
-        //     // color
-        //     const libconfig::Setting &config_color = config_directional.lookup("color");
-        //     d.color = Color(
-        //         config_color.lookup("r"),
-        //         config_color.lookup("g"),
-        //         config_color.lookup("b")
-        //     );
+            // direction
+            d.direction.x = config_directional.lookup("x");
+            d.direction.y = config_directional.lookup("y");
+            d.direction.z = config_directional.lookup("z");
     
-        //     scene.directionals.push_back(d);
-        // }
+            scene.directionals.push_back(d);
+        }
     } catch (const libconfig::SettingNotFoundException &nf) {
         // si y a pas faut voir ce qu'on fait
     }
