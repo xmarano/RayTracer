@@ -4,6 +4,7 @@
 ** File description:
 ** Exception.hpp
 */
+#include <iostream>
 
 #pragma once
 
