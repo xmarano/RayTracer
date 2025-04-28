@@ -4,12 +4,11 @@
 ** File description:
 ** Main.cpp
 */
-
 #include <iostream>
 #include <string>
 #include <memory>
+#include <cmath>
 #include <utility>
-
 #include "../include/Exception.hpp"
 #include "../include/Utils.hpp"
 #include "../include/Display.hpp"
@@ -21,158 +20,169 @@
 #include "../include/Camera.hpp"
 #include "../include/Scene.hpp"
 
+static void printHelp()
+{
+    std::cout << "USAGE: ./raytracer <SCENE_FILE>\n";
+    std::cout << "  SCENE_FILE: scene configuration\n";
+}
+
+static void parseArguments(int argc, char **argv, std::string &file, bool &isPPM)
+{
+    if (argc == 2 && std::string(argv[1]) == "unitest")
+        std::exit(0);
+    if (argc == 2 && std::string(argv[1]) == "-help") {
+        printHelp();
+        std::exit(0);
+    }
+    if (argc != 2)
+        throw RayTracerException("USAGE: ./raytracer <SCENE_FILE>");
+
+    file = argv[1];
+    isPPM = (file.substr(file.find_last_of('.') + 1) == "ppm");
+    if (!isPPM && !is_valid_cfg(file))
+        throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
+}
+
 void ppm(const std::string &file)
 {
     Display display;
     display.parseFile(file);
-    std::cout << "PPM size: " << display.getWidth() << "×" << display.getHeight() << std::endl;
+    std::cout << "PPM size: " << display.getWidth()
+              << "×" << display.getHeight() << std::endl;
     display.init();
     display.run();
 }
 
-void tmp_config(Config::Scene configScene)
+void tmp_config(const Config::Scene &cfg)
 {
-    // camera
     std::cout << "CAMERA:\n";
-    std::cout << "resolution: "<< configScene.camera.width  << "×"<< configScene.camera.height << std::endl;
-    std::cout << "position=(" << configScene.camera.position.x << "," << configScene.camera.position.y << "," << configScene.camera.position.z << ")\n";
-    std::cout << "rotation=(" << configScene.camera.rotation.x << "," << configScene.camera.rotation.y << "," << configScene.camera.rotation.z << ")\n";
-    std::cout << "fieldOfView=" << configScene.camera.fieldOfView << std::endl;
-    std::cout << std::endl;
-    // primitives
-        // spheres
+    std::cout << "resolution: " << cfg.camera.width
+              << "×" << cfg.camera.height << std::endl;
+    std::cout << "position=(" << cfg.camera.position.x
+              << "," << cfg.camera.position.y
+              << "," << cfg.camera.position.z << ")\n";
+    std::cout << "rotation=(" << cfg.camera.rotation.x
+              << "," << cfg.camera.rotation.y
+              << "," << cfg.camera.rotation.z << ")\n";
+    std::cout << "fieldOfView=" << cfg.camera.fieldOfView << std::endl << std::endl;
     std::cout << "SPHERES:\n";
-    for (const auto &s : configScene.spheres) {
-        std::cout << "centre=(" << s.center.x << "," << s.center.y << "," << s.center.z << ")"
-                  << "\trayon=" << s.radius
-                  << "\tcouleur=(" << s.color.r  << "," << s.color.g  << "," << s.color.b  << ")" << std::endl;
-    }
-        // planes
+    for (const auto &s : cfg.spheres)
+        std::cout << "centre=(" << s.center.x << "," << s.center.y
+                  << "," << s.center.z << ") rayon="
+                  << s.radius << " couleur=(" << s.color.r << ","
+                  << s.color.g << "," << s.color.b << ")\n";
     std::cout << "PLANES:\n";
-    for (const auto &p : configScene.planes) {
-        std::cout << "axe=" << p.axis
-                  << "\tposition=" << p.position
-                  << "\tcouleur=(" << p.color.r  << "," << p.color.g << "," << p.color.b << ")" << std::endl;
+    for (const auto &p : cfg.planes)
+        std::cout << "axe=" << p.axis << " pos=" << p.position
+                  << " couleur=(" << p.color.r << "," << p.color.g
+                  << "," << p.color.b << ")\n";
+    std::cout << "LIGHTS:\nambient=" << cfg.ambient
+              << " diffuse=" << cfg.diffuse << "\n";
+}
+
+static void setupScene(const Config::Scene &cfg, RayTracer::Scene &scene, Math::Vector3D &lightDirNorm, std::shared_ptr<RayTracer::IPrimitive> &target)
+{
+    float aspect = static_cast<float>(cfg.camera.width)
+                 / cfg.camera.height;
+    float scale = std::tan((cfg.camera.fieldOfView * 0.5f)
+                           * M_PI / 180.0f);
+    Math::Vector3D bs{2 * scale * aspect, 0, 0};
+    Math::Vector3D ls{0, 2 * scale, 0};
+    Math::Point3D origin{
+        cfg.camera.position.x - bs.x / 2,
+        cfg.camera.position.y - ls.y / 2,
+        cfg.camera.position.z - 1
+    };
+    scene.setCamera(RayTracer::Camera(
+        cfg.camera.position,
+        RayTracer::Rectangle3D(origin, bs, ls)
+    ));
+    scene.setAmbientLight(
+        std::make_unique<RayTracer::AmbientLight>(0.2f)
+    );
+    Math::Vector3D dir{-1.0, -1.0, -1.0};
+    float len = dir.length();
+    lightDirNorm = {dir.x / len, dir.y / len, dir.z / len};
+    scene.addLight(
+        std::make_unique<RayTracer::DirectionalLight>(
+            lightDirNorm, 0.8f
+        )
+    );
+    auto mat = std::make_shared<RayTracer::FlatColor>(Color(255, 100, 100));
+    target = std::make_shared<RayTracer::Sphere>(
+        Math::Point3D(0, 0, -5), 1.0, mat
+    );
+    scene.addObject(target);
+    std::cout << "Material base color = " << mat->getBaseColor().r << " " << mat->getBaseColor().g << " " << mat->getBaseColor().b << std::endl;
+}
+
+static Color computeColor(const RayTracer::Scene &scene, const std::shared_ptr<RayTracer::IPrimitive> &obj, const RayTracer::Ray &viewRay,
+                          const Math::Point3D &pt,
+                          const Math::Vector3D &lightDir)
+{
+    Color col{0, 0, 0};
+    if (scene.getAmbient())
+        col = scene.getAmbient()->illuminate(viewRay, *obj, pt);
+    const float eps = 1e-4f;
+    int i = 0;
+    for (const auto &light : scene.getLights()) {
+        RayTracer::Ray shadow;
+        shadow.origin = {
+            pt.x + lightDir.x * eps,
+            pt.y + lightDir.y * eps,
+            pt.z + lightDir.z * eps
+        };
+        shadow.direction = lightDir;
+        bool inShadow = false;
+        for (const auto &o : scene.getObjects()) {
+            if (o.get() == obj.get())
+                continue;
+            if (o->hits(shadow)) {
+                inShadow = true;
+                break;
+            }
+        }
+        std::cout << "Light " << i << (inShadow ? " is in shadow\n" : " is lit\n");
+        if (!inShadow) {
+            Color d = light->illuminate(viewRay, *obj, pt);
+            col.r = std::min(col.r + d.r, 255);
+            col.g = std::min(col.g + d.g, 255);
+            col.b = std::min(col.b + d.b, 255);
+        }
+        ++i;
     }
-    std::cout << std::endl;
-    // lights
-    std::cout << "LIGHTS:" << std::endl;
-        // ambient
-    std::cout << "ambient=" << configScene.ambient << std::endl;
-        // diffuse
-    std::cout << "diffuse=" << configScene.diffuse << std::endl;
-        // point
-    std::cout << "point=";
-    for (const auto &p : configScene.points) {
-        std::cout << "position=(" << p.position.x << "," << p.position.y << "," << p.position.z << ")"<< std::endl;
-    }
-        // directional
-    // std::cout << "directional:\n";
-    // for (const auto &d : configScene.directionals) {
-    //     std::cout << "direction=(" << d.direction.x << "," << d.direction.y << "," << d.direction.z << ")"
-    //               << "\tcouleur=(" << d.color.r  << "," << d.color.g  << "," << d.color.b  << ")" << std::endl;
-    // }
+    return col;
 }
 
 int main(int argc, char **argv)
 {
-    if (argc == 2 && std::string(argv[1]) == "unitest")
-        return 0;
-    if (argc == 2 && std::string(argv[1]) == "-help") {
-        std::cout << "USAGE: ./raytracer <SCENE_FILE>\n";
-        std::cout << "  SCENE_FILE: scene configuration\n";
-        return 0;
-    }
-
     try {
-        if (argc != 2)
-            throw RayTracerException("USAGE: ./raytracer <SCENE_FILE>");
-
-        std::string file = argv[1];
-        bool is_ppm = (file.substr(file.find_last_of('.') + 1) == "ppm");
-        if (!is_ppm && !is_valid_cfg(file))
-            throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
-
-        if (is_ppm) {
+        std::string file;
+        bool isPPM = false;
+        parseArguments(argc, argv, file, isPPM);
+        if (isPPM) {
             ppm(file);
             return 0;
         }
-
-        // Chargement scène
         Config::Scene configScene = Config::parseScene(file);
         tmp_config(configScene);
         std::cout << "---------" << std::endl;
-
-        // --- build scene ---
         RayTracer::Scene scene;
+        Math::Vector3D lightDir;
+        std::shared_ptr<RayTracer::IPrimitive> sphere;
+        setupScene(configScene, scene, lightDir, sphere);
 
-        //setCamera
-        float aspectRatio = static_cast<float>(configScene.camera.width) / configScene.camera.height;
-        float fov = configScene.camera.fieldOfView;
-        float scale = std::tan((fov * 0.5) * M_PI / 180.0);
-
-        Math::Vector3D bottomSide = {2.0 * scale * aspectRatio, 0, 0};
-        Math::Vector3D leftSide = {0, 2.0 * scale, 0};
-        Math::Point3D screenOrigin = {
-            configScene.camera.position.x - bottomSide.x / 2,
-            configScene.camera.position.y - leftSide.y / 2,
-            configScene.camera.position.z - 1
-        };
-
-        RayTracer::Rectangle3D screen(screenOrigin, bottomSide, leftSide);
-        RayTracer::Camera camera(configScene.camera.position, screen);
-        scene.setCamera(camera);
-
-        // ambient light
-        auto ambientLight = std::make_unique<RayTracer::AmbientLight>(0.2f);
-        scene.setAmbientLight(std::move(ambientLight));
-
-        // directional light
-        auto dirLight = std::make_unique<RayTracer::DirectionalLight>(
-            Math::Vector3D(-1.0, -1.0, -1.0), 0.8f
-        );
-        scene.addLight(std::move(dirLight));
-
-        // --- flat-color material + sphere ---
-        auto material = std::make_shared<RayTracer::FlatColor>(Color(255, 100, 100));
-        std::cout << "Material base color = "
-                  << material->getBaseColor().r << " "
-                  << material->getBaseColor().g << " "
-                  << material->getBaseColor().b << std::endl;
-
-        auto sphere = std::make_shared<RayTracer::Sphere>(
-            Math::Point3D(0, 0, -5),
-            1.0,
-            material
-        );
-        scene.addObject(sphere);
-
-        // --- shoot a dummy ray at the sphere’s center ---
-        Math::Point3D intersection(0, 0, -5);
-        RayTracer::Ray ray(Math::Point3D(0, 0, 0), Math::Vector3D(0, 0, -1));
-
-        // accumulate ambient contribution
-        Color finalColor{0, 0, 0};
-        if (scene.getAmbient())
-            finalColor = scene.getAmbient()->illuminate(ray, *sphere, intersection);
-
-        // accumulate directional contributions
-        for (const auto &lightPtr : scene.getLights()) {
-            Color contrib = lightPtr->illuminate(ray, *sphere, intersection);
-            finalColor.r = std::min(finalColor.r + contrib.r, 255);
-            finalColor.g = std::min(finalColor.g + contrib.g, 255);
-            finalColor.b = std::min(finalColor.b + contrib.b, 255);
-        }
+        Math::Point3D intersection{0, 0, -5};
+        RayTracer::Ray viewRay(Math::Point3D(0, 0, 0), Math::Vector3D(0, 0, -1));
+        Color final = computeColor(scene, sphere, viewRay, intersection, lightDir);
 
         std::cout << "Final color at point = "
-                  << finalColor.r << " "
-                  << finalColor.g << " "
-                  << finalColor.b << std::endl;
-
+                  << final.r << " "
+                  << final.g << " "
+                  << final.b << std::endl;
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;
         return 84;
     }
-
     return 0;
 }
