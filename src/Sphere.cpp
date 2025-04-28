@@ -1,20 +1,18 @@
 /*
-** EPITECH PROJECT, 2024
+** EPITECH PROJECT, 2025
 ** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
 ** Sphere.cpp
 */
-
 #include "../include/Sphere.hpp"
 #include <cmath>
 
 RayTracer::Sphere::Sphere(const Math::Point3D &center, double radius, std::shared_ptr<IMaterial> material)
-    : _center(center),
-      _radius(radius),
-      _material(std::move(material))
+    : _center(center), _radius(radius), _material(std::move(material))
 {}
 
-bool RayTracer::Sphere::hits(const Ray &ray) const {
+bool RayTracer::Sphere::hits(const Ray &ray) const
+{
     Math::Vector3D oc = ray.origin - _center;
     double a = ray.direction.dot(ray.direction);
     double b = 2 * oc.dot(ray.direction);
@@ -27,14 +25,15 @@ bool RayTracer::Sphere::hits(const Ray &ray) const {
     return (t1 >= 0.0) || (t2 >= 0.0);
 }
 
-void RayTracer::Sphere::translate(const Math::Vector3D &v) {
+void RayTracer::Sphere::translate(const Math::Vector3D &v)
+{
     _center = _center + v;
 }
 
 void RayTracer::Sphere::rotate(const Math::Vector3D &, double)
-{
-}
+{}
 
-std::shared_ptr<RayTracer::IMaterial> RayTracer::Sphere::getMaterial() const {
+std::shared_ptr<RayTracer::IMaterial> RayTracer::Sphere::getMaterial() const
+{
     return _material;
 }

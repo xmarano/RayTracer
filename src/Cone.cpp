@@ -1,22 +1,19 @@
 /*
-** EPITECH PROJECT, 2024
+** EPITECH PROJECT, 2025
 ** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
 ** Cone.cpp
 */
-
 #include "../include/Cone.hpp"
 #include <cmath>
 
-RayTracer::Cone::Cone(const Math::Point3D &apex,
-                      double height,
-                      double radius,
-                      std::shared_ptr<RayTracer::IMaterial> material)
-    : _apex(apex), _height(height), _radius(radius), _material(std::move(material)) {}
+RayTracer::Cone::Cone(const Math::Point3D &apex, double height, double radius, std::shared_ptr<RayTracer::IMaterial> material)
+    : _apex(apex), _height(height), _radius(radius), _material(std::move(material))
+{}
 
 
-bool RayTracer::Cone::hits(const RayTracer::Ray &ray) const {
-
+bool RayTracer::Cone::hits(const RayTracer::Ray &ray) const
+{
     Math::Vector3D d = ray.direction;
     Math::Vector3D oc = ray.origin - _apex;
 
@@ -51,7 +48,8 @@ bool RayTracer::Cone::hits(const RayTracer::Ray &ray) const {
            (t2 >= 0.0 && z2 <= _apex.z && z2 >= baseZ);
 }
 
-void RayTracer::Cone::translate(const Math::Vector3D &v) {
+void RayTracer::Cone::translate(const Math::Vector3D &v)
+{
     _apex = _apex + v;
 }
 
@@ -60,6 +58,7 @@ void RayTracer::Cone::rotate(const Math::Vector3D &axis, double angleDegrees)
     _axis = Math::rotateVector(_axis, axis, angleDegrees);
 }
 
-std::shared_ptr<RayTracer::IMaterial> RayTracer::Cone::getMaterial() const {
+std::shared_ptr<RayTracer::IMaterial> RayTracer::Cone::getMaterial() const
+{
     return _material;
 }

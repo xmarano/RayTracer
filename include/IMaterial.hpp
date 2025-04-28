@@ -1,34 +1,31 @@
 /*
-** EPITECH PROJECT, 2024
+** EPITECH PROJECT, 2025
 ** B-OOP-400-MAR-4-1-raytracer-selim.bouasker
 ** File description:
 ** Material.hpp
 */
-#pragma once
 #include "Color.hpp"
 #include "Math3D.hpp"
+
+#pragma once
+
 namespace RayTracer {
-class IMaterial {
-public:
-    virtual ~IMaterial() = default;
-    virtual Color getBaseColor() const = 0;
-    virtual Color shade(const Color &base,
-                        const Color &light,
-                        const Math::Point3D &point) const = 0;
-};
-class FlatColor : public IMaterial {
-public:
-    explicit FlatColor(const Color &c) : _color(c) {}
-    ~FlatColor() override = default;
+    class IMaterial {
+        public:
+            virtual ~IMaterial() = default;
+            virtual Color getBaseColor() const = 0;
+            virtual Color shade(const Color &base, const Color &light, const Math::Point3D &point) const = 0;
+    };
 
-    Color getBaseColor() const override {
-        return _color;
-    }
-    Color shade(const Color & , const Color &light, const Math::Point3D &) const override {
-        return light;
-    }
+    class FlatColor : public IMaterial {
+        public:
+            explicit FlatColor(const Color &c) : _color(c) {}
+            ~FlatColor() override = default;
 
-private:
-    Color _color;
-};
+            Color getBaseColor() const override { return _color; }
+            Color shade(const Color & , const Color &light, const Math::Point3D &) const override { return light; }
+
+        private:
+            Color _color;
+    };
 }
