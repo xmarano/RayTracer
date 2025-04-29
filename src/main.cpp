@@ -16,6 +16,7 @@
 #include "../include/Plane.hpp"
 #include "../include/Camera.hpp"
 #include "../include/Scene.hpp"
+#include "../include/PointLight.hpp"
 
 void Main::printHelp()
 {
@@ -103,11 +104,11 @@ bool isInShadow(const RayTracer::Scene &scene, const Math::Point3D &point, const
 
 
 // ------ FIN AJOUT ------
-
 void Main::renderPPM(const Config::Scene &cfg)
 {
     RayTracer::Scene scene;
 
+    // Camera
     float aspect = static_cast<float>(cfg.camera.width) / cfg.camera.height;
     float scale  = std::tan((cfg.camera.fieldOfView * 0.5f) * M_PI / 180.0f);
     Math::Vector3D bs{2.0f * scale * aspect, 0.0f, 0.0f};
@@ -125,10 +126,9 @@ void Main::renderPPM(const Config::Scene &cfg)
         )
     );
 
+    // Lights
     scene.setAmbientLight(
-        std::make_unique<RayTracer::AmbientLight>(
-            static_cast<float>(cfg.ambient)
-        )
+        std::make_unique<RayTracer::AmbientLight>(static_cast<float>(cfg.ambient))
     );
 
     for (const auto &d : cfg.directionals) {
@@ -140,6 +140,16 @@ void Main::renderPPM(const Config::Scene &cfg)
         );
     }
 
+    for (const auto &p : cfg.points) {
+        scene.addLight(
+            std::make_unique<RayTracer::PointLight>(
+                p.position,
+                static_cast<float>(cfg.diffuse)
+            )
+        );
+    }
+
+    // Objects
     for (const auto &s : cfg.spheres) {
         scene.addObject(
             std::make_shared<RayTracer::Sphere>(
@@ -170,6 +180,7 @@ void Main::renderPPM(const Config::Scene &cfg)
         );
     }
 
+    // Render
     int w = cfg.camera.width;
     int h = cfg.camera.height;
     std::cout << "P3\n" << w << " " << h << "\n255\n";
@@ -201,18 +212,20 @@ void Main::renderPPM(const Config::Scene &cfg)
             }
 
             if (closestObject) {
-                // Start with ambient
+                // Ambient
                 if (scene.getAmbient()) {
                     finalColor = scene.getAmbient()->illuminate(ray, *closestObject, hitPoint);
                 }
 
-                // Lighting
+                // Lights
                 for (const auto &light : scene.getLights()) {
                     const auto *dirLight = dynamic_cast<RayTracer::DirectionalLight *>(light.get());
+                    const auto *pointLight = dynamic_cast<RayTracer::PointLight *>(light.get());
+
                     if (dirLight) {
                         Math::Vector3D lightDir = dirLight->getDirection() * -1.0;
                         lightDir = lightDir / lightDir.length();
-
+                        
                         // Shadow ray
                         const double bias = 1e-4;
                         Math::Point3D shadowOrigin = hitPoint + normal * bias;
@@ -224,6 +237,37 @@ void Main::renderPPM(const Config::Scene &cfg)
                             Math::Point3D tmpPt;
                             Math::Vector3D tmpN;
                             if (obj != closestObject && obj->intersect(shadowRay, tTmp, tmpPt, tmpN)) {
+                                shadowed = true;
+                                break;
+                            }
+                        }
+
+                        if (!shadowed) {
+                            double diff = std::max(0.0, normal.dot(lightDir));
+                            Color lightColor = light->illuminate(ray, *closestObject, hitPoint);
+
+                            finalColor.r = std::min(finalColor.r + static_cast<int>(lightColor.r * diff), 255);
+                            finalColor.g = std::min(finalColor.g + static_cast<int>(lightColor.g * diff), 255);
+                            finalColor.b = std::min(finalColor.b + static_cast<int>(lightColor.b * diff), 255);
+                        }
+                    }
+
+                    if (pointLight) {
+                        Math::Vector3D lightDir = pointLight->getPosition() - hitPoint;
+                        double dist = lightDir.length();
+                        lightDir = lightDir / dist;
+
+                        // Shadow ray
+                        const double bias = 1e-4;
+                        Math::Point3D shadowOrigin = hitPoint + normal * bias;
+                        RayTracer::Ray shadowRay(shadowOrigin, lightDir);
+                        bool shadowed = false;
+
+                        for (const auto &obj : scene.getObjects()) {
+                            double tTmp;
+                            Math::Point3D tmpPt;
+                            Math::Vector3D tmpN;
+                            if (obj != closestObject && obj->intersect(shadowRay, tTmp, tmpPt, tmpN) && tTmp < dist) {
                                 shadowed = true;
                                 break;
                             }
