@@ -4,11 +4,9 @@
 ** File description:
 ** Display.hpp
 */
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <iostream>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
 #include <SFML/Graphics.hpp>
 #include "Exception.hpp"
 #include "Utils.hpp"
@@ -17,7 +15,7 @@
 
 class Display {
     public:
-        Display();
+        Display(int width, int height);
         ~Display() {};
 
         class Pixel {
@@ -27,18 +25,25 @@ class Display {
                 Pixel(int rr, int gg, int bb): r(rr), g(gg), b(bb) {}
         };
 
-        void parseFile(const std::string& filename);
         void init();
         void run();
 
-        int getWidth()  const { return _width; }
-        int getHeight() const { return _height; }
+        void pushPixel(int x, int y, const Pixel& px);
+        void notifyDone();
 
     private:
         int _width;
         int _height;
-        int _maxval;
-        std::vector<Pixel> _pixels;
+
+        struct PixelEntry {
+            int x, y;
+            Pixel color;
+        };
+        std::queue<PixelEntry> _pixelQueue;
+        std::mutex _queueMtx;
+        std::condition_variable _queueCv;
+        bool _done = false;
+
         sf::RenderWindow _window;
         sf::Texture _texture;
         sf::Sprite _sprite;
