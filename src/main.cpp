@@ -86,7 +86,7 @@ void Main::debug_config(const Config::Scene &cfg)
               << "  diffuse = " << cfg.diffuse << "\n";
 }
 
-void Main::renderPPM(const Config::Scene &cfg)
+void Main::calculPPM(const Config::Scene &cfg)
 {
     RayTracer::Scene scene;
 
@@ -167,26 +167,24 @@ void Main::renderPPM(const Config::Scene &cfg)
             double u = (x + 0.5) / w;
             double v = (y + 0.5) / h;
             RayTracer::Ray ray  = scene.getCamera().ray(u, v);
-            Color pix{0, 0, 0};
+            Color pixel{0, 0, 0};
 
             for (const auto &obj : scene.getObjects()) {
                 if (obj->hits(ray)) {
                     if (scene.getAmbient()) {
-                        pix = scene.getAmbient()
-                                  ->illuminate(ray, *obj, Math::Point3D());
+                        pixel = scene.getAmbient()->illuminate(ray, *obj, Math::Point3D());
                     }
                     for (const auto &lt : scene.getLights()) {
                         auto c = lt->illuminate(ray, *obj, Math::Point3D());
-                        pix.r = std::min(pix.r + c.r, 255);
-                        pix.g = std::min(pix.g + c.g, 255);
-                        pix.b = std::min(pix.b + c.b, 255);
+                        pixel.r = std::min(pixel.r + c.r, 255);
+                        pixel.g = std::min(pixel.g + c.g, 255);
+                        pixel.b = std::min(pixel.b + c.b, 255);
                     }
                     break;
                 }
             }
 
-            std::cout << pix.toPPM()
-                      << ((x + 1 < w) ? " " : "\n");
+            std::cout << pixel.toPPM() << "\n";
         }
     }
 }
@@ -211,7 +209,7 @@ int main(int argc, char **argv)
             return 0;
         }
 
-        main.renderPPM(cfg);
+        main.calculPPM(cfg);
 
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;

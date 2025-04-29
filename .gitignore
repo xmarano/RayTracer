@@ -2,7 +2,6 @@
 .DS_Store
 a.out
 
-raytracer
 coverage.txt
 *.py
 *.o
@@ -10,3 +9,6 @@ coverage.txt
 *.gcno
 *.gcov
 unitests
+
+raytracer
+toto.ppm

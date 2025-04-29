@@ -14,5 +14,5 @@ class Main {
         void parseArguments(int argc, char **argv, std::string &file, bool &isPPM, bool &isDebug);
         void ppm(const std::string &file);
         void debug_config(const Config::Scene &cfg);
-        void renderPPM(const Config::Scene &cfg);
+        void calculPPM(const Config::Scene &cfg);
 };
