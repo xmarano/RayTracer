@@ -23,7 +23,7 @@ void Main::printHelp()
     std::cout << "  SCENE_FILE: scene configuration\n";
 }
 
-void Main::parseArguments(int argc, char **argv, std::string &file, bool &isPPM, bool &isDebug)
+void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebug)
 {
     if (argc == 2 && std::string(argv[1]) == "unitest")
         std::exit(0);
@@ -44,19 +44,9 @@ void Main::parseArguments(int argc, char **argv, std::string &file, bool &isPPM,
     }
 
     file = argv[1];
-    isPPM = (file.substr(file.find_last_of('.') + 1) == "ppm");
-    if (!isPPM && !is_valid_cfg(file)) {
+    if (!is_valid_cfg(file)) {
         throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
     }
-}
-
-void Main::ppm(const std::string &file)
-{
-    Display display;
-    display.parseFile(file);
-    std::cout << "PPM size: " << display.getWidth() << " × " << display.getHeight() << std::endl;
-    display.init();
-    display.run();
 }
 
 void Main::debug_config(const Config::Scene &cfg)
@@ -86,20 +76,18 @@ void Main::debug_config(const Config::Scene &cfg)
               << "  diffuse = " << cfg.diffuse << "\n";
 }
 
-void Main::calculPPM(const Config::Scene &cfg)
+void Main::calculPPM(const Config::Scene &cfg, Display &display)
 {
     RayTracer::Scene scene;
-
-    float aspect = static_cast<float>(cfg.camera.width) /  cfg.camera.height;
-    float scale  = std::tan((cfg.camera.fieldOfView * 0.5f) * M_PI / 180.0f);
-    Math::Vector3D bs{2.0f * scale * aspect, 0.0f, 0.0f};
-    Math::Vector3D ls{0.0f, 2.0f * scale, 0.0f};
+    float aspect = float(cfg.camera.width) / cfg.camera.height;
+    float scale  = std::tan((cfg.camera.fieldOfView * 0.5f) * M_PI / 180.f);
+    Math::Vector3D bs{2 * scale * aspect, 0, 0}, ls{0, 2 * scale, 0};
     Math::Point3D origin{
-        cfg.camera.position.x - bs.x * 0.5f,
-        cfg.camera.position.y - ls.y * 0.5f,
-        cfg.camera.position.z - 1.0f
+        cfg.camera.position.x - bs.x / 2,
+        cfg.camera.position.y - ls.y / 2,
+        cfg.camera.position.z - 1
     };
-    // Camera setup
+
     scene.setCamera(
         RayTracer::Camera(
             cfg.camera.position,
@@ -107,23 +95,22 @@ void Main::calculPPM(const Config::Scene &cfg)
         )
     );
 
-    // Lights setup
     scene.setAmbientLight(
         std::make_unique<RayTracer::AmbientLight>(
-            static_cast<float>(cfg.ambient)
+            cfg.ambient
         )
     );
-    for (const auto &d : cfg.directionals) {
+
+    for (auto &d : cfg.directionals) {
         scene.addLight(
             std::make_unique<RayTracer::DirectionalLight>(
                 d.direction,
-                static_cast<float>(cfg.diffuse)
+                cfg.diffuse
             )
         );
     }
 
-    // Primitives setup
-    for (const auto &s : cfg.spheres) {
+    for (auto &s : cfg.spheres) {
         scene.addObject(
             std::make_shared<RayTracer::Sphere>(
                 s.center,
@@ -133,14 +120,13 @@ void Main::calculPPM(const Config::Scene &cfg)
         );
     }
 
-    // Planes setup
-    for (const auto &p : cfg.planes) {
-        Math::Vector3D normal{0.0f, 0.0f, 0.0f};
-        if (p.axis == 'X') normal.x = 1.0f;
-        else if (p.axis == 'Y') normal.y = 1.0f;
-        else normal.z = 1.0f;
+    for (auto &p : cfg.planes) {
+        Math::Vector3D normal{0, 0, 0};
+        if (p.axis == 'X') normal.x = 1;
+        else if (p.axis == 'Y') normal.y = 1;
+        else normal.z = 1;
 
-        Math::Point3D pt{0.0f, 0.0f, 0.0f};
+        Math::Point3D pt{0, 0, 0};
         if (p.axis == 'X') pt.x = p.position;
         else if (p.axis == 'Y') pt.y = p.position;
         else pt.z = p.position;
@@ -154,28 +140,19 @@ void Main::calculPPM(const Config::Scene &cfg)
         );
     }
 
-    // PPM header
-    int w = cfg.camera.width;
-    int h = cfg.camera.height;
-    std::cout << "P3\n"
-              << w << " " << h << "\n"
-              << "255\n";
-
-    // Raytrace loop
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            double u = (x + 0.5) / w;
-            double v = (y + 0.5) / h;
-            RayTracer::Ray ray  = scene.getCamera().ray(u, v);
+    // render -> push display
+    int w = cfg.camera.width, h = cfg.camera.height;
+    for (int y = 0; y < h; y++) {
+        for (int x = 0; x < w; x++) {
+            double u = (x + 0.5) / w, v = (y + 0.5) / h;
+            RayTracer::Ray ray = scene.getCamera().ray(u, v);
             Color pixel{0, 0, 0};
-
-            for (const auto &obj : scene.getObjects()) {
+            for (auto &obj : scene.getObjects()) {
                 if (obj->hits(ray)) {
-                    if (scene.getAmbient()) {
-                        pixel = scene.getAmbient()->illuminate(ray, *obj, Math::Point3D());
-                    }
-                    for (const auto &lt : scene.getLights()) {
-                        auto c = lt->illuminate(ray, *obj, Math::Point3D());
+                    if (scene.getAmbient())
+                        pixel = scene.getAmbient()->illuminate(ray, *obj, {});
+                    for (auto &lt : scene.getLights()) {
+                        auto c = lt->illuminate(ray, *obj, {});
                         pixel.r = std::min(pixel.r + c.r, 255);
                         pixel.g = std::min(pixel.g + c.g, 255);
                         pixel.b = std::min(pixel.b + c.b, 255);
@@ -183,10 +160,11 @@ void Main::calculPPM(const Config::Scene &cfg)
                     break;
                 }
             }
-
-            std::cout << pixel.toPPM() << "\n";
+            display.pushPixel(x, y, Display::Pixel(pixel.r, pixel.g, pixel.b));
         }
     }
+
+    display.notifyDone();
 }
 
 int main(int argc, char **argv)
@@ -194,13 +172,8 @@ int main(int argc, char **argv)
     try {
         Main main;
         std::string file;
-        bool isPPM, isDebug = false;
-        main.parseArguments(argc, argv, file, isPPM, isDebug);
-        
-        if (isPPM) {
-            main.ppm(file);
-            return 0;
-        }
+        bool isDebug = false;
+        main.parseArguments(argc, argv, file, isDebug);
 
         auto cfg = Config::parseScene(file);
 
@@ -209,8 +182,14 @@ int main(int argc, char **argv)
             return 0;
         }
 
-        main.calculPPM(cfg);
+        Display display(cfg.camera.width, cfg.camera.height);
+        display.init();
 
+        std::thread calculThread(&Main::calculPPM, &main, cfg, std::ref(display));
+        display.run();
+
+        if (calculThread.joinable())
+            calculThread.join();
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;
         return 84;

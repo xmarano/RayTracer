@@ -5,14 +5,15 @@
 ** main.hpp
 */
 #include "ConfigParser.hpp"
+#include "Display.hpp"
+#include <thread>
 
 #pragma once
 
 class Main {
     public:
         void printHelp();
-        void parseArguments(int argc, char **argv, std::string &file, bool &isPPM, bool &isDebug);
-        void ppm(const std::string &file);
+        void parseArguments(int argc, char **argv, std::string &file, bool &isDebug);
         void debug_config(const Config::Scene &cfg);
-        void calculPPM(const Config::Scene &cfg);
+        void calculPPM(const Config::Scene &cfg, Display &display);
 };
