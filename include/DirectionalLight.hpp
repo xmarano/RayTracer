@@ -13,7 +13,7 @@ namespace RayTracer {
     class DirectionalLight : public ILight {
         public:
             DirectionalLight(const Math::Vector3D &direction, float intensity);
-
+            Math::Vector3D getDirection() const;
             Color illuminate(const Ray &ray, const IPrimitive &object, const Math::Point3D &point) const override;
 
         private:

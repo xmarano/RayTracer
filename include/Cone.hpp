@@ -17,7 +17,7 @@ namespace RayTracer {
             Cone(const Math::Point3D &apex, double height, double radius, std::shared_ptr<IMaterial> material);
             ~Cone() override = default;
 
-            bool hits(const Ray &ray) const override;
+            bool intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const override;
             void translate(const Math::Vector3D &v) override;
             void rotate(const Math::Vector3D &axis, double angleDegrees) override;
             std::shared_ptr<IMaterial> getMaterial() const override;

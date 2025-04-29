@@ -11,43 +11,6 @@ RayTracer::Cone::Cone(const Math::Point3D &apex, double height, double radius, s
     : _apex(apex), _height(height), _radius(radius), _material(std::move(material))
 {}
 
-
-bool RayTracer::Cone::hits(const RayTracer::Ray &ray) const
-{
-    Math::Vector3D d = ray.direction;
-    Math::Vector3D oc = ray.origin - _apex;
-
-    double k = _radius / _height;
-    double k2 = k * k;
-
-    double dx = d.x;
-    double dy = d.y;
-    double dz = d.z;
-
-    double ox = oc.x;
-    double oy = oc.y;
-    double oz = oc.z;
-
-    double a = dx * dx + dy * dy - k2 * dz * dz;
-    double b = 2 * (dx * ox + dy * oy - k2 * dz * oz);
-    double c = ox * ox + oy * oy - k2 * oz * oz;
-
-    double delta = b * b - 4 * a * c;
-    if (delta < 0.0)
-        return false;
-
-    double sqrtd = std::sqrt(delta);
-    double t1 = (-b - sqrtd) / (2 * a);
-    double t2 = (-b + sqrtd) / (2 * a);
-
-    double z1 = ray.origin.z + t1 * d.z;
-    double z2 = ray.origin.z + t2 * d.z;
-    double baseZ = _apex.z - _height;
-
-    return (t1 >= 0.0 && z1 <= _apex.z && z1 >= baseZ) ||
-           (t2 >= 0.0 && z2 <= _apex.z && z2 >= baseZ);
-}
-
 void RayTracer::Cone::translate(const Math::Vector3D &v)
 {
     _apex = _apex + v;
@@ -61,4 +24,55 @@ void RayTracer::Cone::rotate(const Math::Vector3D &axis, double angleDegrees)
 std::shared_ptr<RayTracer::IMaterial> RayTracer::Cone::getMaterial() const
 {
     return _material;
+}
+
+bool RayTracer::Cone::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const
+{
+    Math::Vector3D oc = ray.origin - _apex;
+    double k = _radius / _height;
+    k = k * k;
+
+    double dx = ray.direction.x;
+    double dy = ray.direction.y;
+    double dz = ray.direction.z;
+    double ox = oc.x;
+    double oy = oc.y;
+    double oz = oc.z;
+
+    double a = dx * dx + dz * dz - k * dy * dy;
+    double b = 2 * (ox * dx + oz * dz - k * oy * dy);
+    double c = ox * ox + oz * oz - k * oy * oy;
+
+    double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0)
+        return false;
+
+    double sqrtDisc = std::sqrt(discriminant);
+    double t0 = (-b - sqrtDisc) / (2 * a);
+    double t1 = (-b + sqrtDisc) / (2 * a);
+
+    if (t0 > t1)
+        std::swap(t0, t1);
+
+    double y = oy + t0 * dy;
+    if (y < 0 || y > _height) {
+        y = oy + t1 * dy;
+        if (y < 0 || y > _height)
+            return false;
+        t = t1;
+    } else {
+        t = t0;
+    }
+
+    hitPoint = ray.origin + ray.direction * t;
+
+    Math::Vector3D tmp = hitPoint - _apex;
+    tmp.y = -(k * std::sqrt(tmp.x * tmp.x + tmp.z * tmp.z));
+    double length = std::sqrt(tmp.x * tmp.x + tmp.y * tmp.y + tmp.z * tmp.z);
+    if (length != 0)
+        normal = tmp / length;
+    else
+        normal = tmp;
+
+    return true;
 }

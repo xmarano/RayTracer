@@ -20,3 +20,8 @@ Color RayTracer::DirectionalLight::illuminate(const Ray &, const IPrimitive &obj
         static_cast<int>(std::clamp(base.b * _intensity, 0.0f, 255.0f))
     );
 }
+
+Math::Vector3D RayTracer::DirectionalLight::getDirection() const
+{
+    return _direction;
+}

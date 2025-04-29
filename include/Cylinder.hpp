@@ -17,7 +17,7 @@ namespace RayTracer {
             Cylinder(const Math::Point3D &baseCenter, double radius, double height, std::shared_ptr<IMaterial> material);
             ~Cylinder() override = default;
 
-            bool hits(const Ray &ray) const override;
+            bool intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const override;
             void translate(const Math::Vector3D &v) override;
             void rotate(const Math::Vector3D &axis, double angleDegrees) override;
             std::shared_ptr<IMaterial> getMaterial() const override;
@@ -28,5 +28,6 @@ namespace RayTracer {
             double _height;
             Math::Vector3D _axis;
             std::shared_ptr<IMaterial> _material;
+            Math::Point3D _center;
     };
 }
