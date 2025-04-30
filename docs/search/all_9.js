@@ -7,7 +7,8 @@ var searchData=
   ['imaterial_2ehpp_4',['IMaterial.hpp',['../_i_material_8hpp.html',1,'']]],
   ['init_5',['init',['../class_display.html#aacbf91b9f8c57fc2cb892c45fd44e655',1,'Display']]],
   ['intersect_6',['intersect',['../class_ray_tracer_1_1_cone.html#aee2f4ec0d3af6f1b51cc44a85e72760a',1,'RayTracer::Cone::intersect()'],['../class_ray_tracer_1_1_cylinder.html#a950d931b8f47c43deded63e50d925499',1,'RayTracer::Cylinder::intersect()'],['../class_ray_tracer_1_1_i_primitive.html#ab6f23f66b064d49573b8132a42875c68',1,'RayTracer::IPrimitive::intersect()'],['../class_ray_tracer_1_1_plane.html#a7eb6440440c4037e72c963f1f7cd1cdb',1,'RayTracer::Plane::intersect()'],['../class_ray_tracer_1_1_sphere.html#a466a2ca7e85f63fd3225cf192393ef85',1,'RayTracer::Sphere::intersect()']]],
-  ['iprimitive_7',['IPrimitive',['../class_ray_tracer_1_1_i_primitive.html',1,'RayTracer']]],
-  ['iprimitive_2ehpp_8',['IPrimitive.hpp',['../_i_primitive_8hpp.html',1,'']]],
-  ['is_5fvalid_5fcfg_9',['is_valid_cfg',['../_utils_8cpp.html#a80d0da373fa4cfd1f7ae0b14d160b6f5',1,'is_valid_cfg(const std::string &amp;f):&#160;Utils.cpp'],['../_utils_8hpp.html#a80d0da373fa4cfd1f7ae0b14d160b6f5',1,'is_valid_cfg(const std::string &amp;f):&#160;Utils.cpp']]]
+  ['introduction_7',['Introduction',['../index.html#intro',1,'']]],
+  ['iprimitive_8',['IPrimitive',['../class_ray_tracer_1_1_i_primitive.html',1,'RayTracer']]],
+  ['iprimitive_2ehpp_9',['IPrimitive.hpp',['../_i_primitive_8hpp.html',1,'']]],
+  ['is_5fvalid_5fcfg_10',['is_valid_cfg',['../_utils_8cpp.html#a80d0da373fa4cfd1f7ae0b14d160b6f5',1,'is_valid_cfg(const std::string &amp;f):&#160;Utils.cpp'],['../_utils_8hpp.html#a80d0da373fa4cfd1f7ae0b14d160b6f5',1,'is_valid_cfg(const std::string &amp;f):&#160;Utils.cpp']]]
 ];
