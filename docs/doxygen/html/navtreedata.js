@@ -25,6 +25,9 @@
 var NAVTREE =
 [
   [ "RayTracer", "index.html", [
+    [ "Introduction", "index.html#intro", null ],
+    [ "Features", "index.html#features", null ],
+    [ "Usage", "index.html#usage", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [

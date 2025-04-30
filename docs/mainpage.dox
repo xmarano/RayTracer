@@ -1,0 +1,16 @@
+/** 
+* \mainpage RayTracer
+*
+* \section intro Introduction
+* RayTracer is a small C++17-based, multi-threaded ray-tracer with real-time SFML visualization.
+*
+* \section features Features
+* - Multithreading for pixel production
+* - Real-time display with SFML
+* - Configurable scenes via .cfg files
+* - PPM export mode
+*
+* \section usage Usage
+* 1. `make` to build
+* 2. `./raytracer scenes/demo.cfg` to render in SFML window
+*/

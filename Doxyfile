@@ -9,14 +9,15 @@ EXTRACT_PRIVATE        = YES
 EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = YES
 
-INPUT                  = src include
+INPUT                  = src include docs/mainpage.dox
 
 RECURSIVE              = YES
 
 EXCLUDE                = criterion.cpp
 
 FILE_PATTERNS          = *.cpp \
-                         *.hpp
+                         *.hpp \
+                         *.dox
 
 STRIP_FROM_PATH        = $(PROJECT_SOURCE_DIR)
 STRIP_FROM_INC_PATH    = include
