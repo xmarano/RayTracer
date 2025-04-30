@@ -1,0 +1,32 @@
+PROJECT_NAME           = "RayTracer"
+PROJECT_BRIEF          = "Ray tracing is a technique used to generate realistic digital images by simulating the inverse path of light. Our goal is to create a program able to generate an image from a file describing the scene."
+PROJECT_NUMBER         = 1.0
+
+OUTPUT_DIRECTORY       = docs/doxygen
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+
+INPUT                  = src include
+
+RECURSIVE              = YES
+
+EXCLUDE                = criterion.cpp
+
+FILE_PATTERNS          = *.cpp \
+                         *.hpp
+
+STRIP_FROM_PATH        = $(PROJECT_SOURCE_DIR)
+STRIP_FROM_INC_PATH    = include
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = YES
+REFERENCES_RELATION    = YES
+REFERENCES_LINK_SOURCE = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+
+GENERATE_LATEX         = NO
