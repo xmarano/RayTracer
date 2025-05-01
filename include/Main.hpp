@@ -13,7 +13,7 @@
 class Main {
     public:
         void printHelp();
-        void parseArguments(int argc, char **argv, std::string &file, bool &isDebug);
+        void parseArguments(int argc, char **argv, std::string &file, bool &isDebug, bool &wantPPM);
         void debug_config(const Config::Scene &cfg);
-        void calculPPM(const Config::Scene &cfg, Display &display);
+        void calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM);
 };

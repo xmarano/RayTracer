@@ -25,11 +25,13 @@
 
 void Main::printHelp()
 {
-    std::cout << "USAGE: ./raytracer <SCENE_FILE>\n";
-    std::cout << "  SCENE_FILE: scene configuration\n";
+    std::cout << "USAGE: ./raytracer <SCENE_FILE> [-d] [-w]\n";
+    std::cout << "  SCENE_FILE: scene configuration (.cfg)\n";
+    std::cout << "  -d : debug mode (print config)\n";
+    std::cout << "  -w : write PPM to stdout (no window)\n";
 }
 
-void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebug)
+void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebug, bool &wantPPM)
 {
     if (argc == 2 && std::string(argv[1]) == "unitest")
         std::exit(0);
@@ -45,8 +47,14 @@ void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebu
         return;
     }
 
-    if (argc != 2) {
+    if (argc == 3 && std::string(argv[2]) == "-w") {
+        wantPPM = true;
+    }
+
+    if (argc != 2 && !wantPPM) {
         throw RayTracerException("USAGE: ./raytracer <SCENE_FILE>");
+    } else if (argc == 3 && std::string(argv[2]) == "-d") {
+        
     }
 
     file = argv[1];
@@ -82,7 +90,7 @@ void Main::debug_config(const Config::Scene &cfg)
               << "  diffuse = " << cfg.diffuse << "\n";
 }
 
-void Main::calculPPM(const Config::Scene &cfg, Display &display)
+void Main::calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM)
 {
     RayTracer::Scene scene;
 
@@ -161,7 +169,9 @@ void Main::calculPPM(const Config::Scene &cfg, Display &display)
 
     int w = cfg.camera.width;
     int h = cfg.camera.height;
-    // std::cout << "P3\n" << w << " " << h << "\n255\n";
+    if (wantPPM) {
+        std::cout << "P3\n" << w << " " << h << "\n255\n";
+    }
 
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
@@ -254,11 +264,15 @@ void Main::calculPPM(const Config::Scene &cfg, Display &display)
                 }
             }
 
-            display.pushPixel(x, y, Display::Pixel(finalColor.r, finalColor.g, finalColor.b));
-            // std::cout << pixel.toPPM() << "\n";
+            if (wantPPM) {
+                std::cout << finalColor.toPPM() << "\n";
+            } else {
+                display.pushPixel(x, y, Display::Pixel(finalColor.r, finalColor.g, finalColor.b));
+            }
         }
     }
-    display.notifyDone();
+    if (!wantPPM)
+        display.notifyDone();
 }
 
 int main(int argc, char **argv)
@@ -266,8 +280,8 @@ int main(int argc, char **argv)
     try {
         Main main;
         std::string file;
-        bool isDebug = false;
-        main.parseArguments(argc, argv, file, isDebug);
+        bool isDebug, wantPPM = false;
+        main.parseArguments(argc, argv, file, isDebug, wantPPM);
 
         auto cfg = Config::parseScene(file);
 
@@ -276,12 +290,17 @@ int main(int argc, char **argv)
             return 0;
         }
 
-        Display display(cfg.camera.width, cfg.camera.height);
-        display.init();
-        std::thread worker(&Main::calculPPM, &main, cfg, std::ref(display));
-        display.run();
-        if (worker.joinable())
-            worker.join();
+        if (wantPPM) {
+            Display display(cfg.camera.width, cfg.camera.height);
+            main.calculPPM(cfg, display, wantPPM);
+        } else {
+            Display display(cfg.camera.width, cfg.camera.height);
+            display.init();
+            std::thread worker(&Main::calculPPM, &main, cfg, std::ref(display), wantPPM);
+            display.run();
+            if (worker.joinable())
+                worker.join();
+        }
 
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;
