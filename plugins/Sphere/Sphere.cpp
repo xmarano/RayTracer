@@ -4,12 +4,23 @@
 ** File description:
 ** Sphere.cpp
 */
-#include "../include/Sphere.hpp"
+#include "Sphere.hpp"
 #include <cmath>
 
-RayTracer::Sphere::Sphere(const Math::Point3D &center, double radius, std::shared_ptr<IMaterial> material)
-    : _center(center), _radius(radius), _material(std::move(material)) {}
+RayTracer::Sphere::Sphere()
+    : _center(Math::Point3D(0, 0, 0)), _radius(0.0), _material(nullptr) {}
 
+void RayTracer::Sphere::setPosition(const Math::Point3D &pos) {
+    _center = pos;
+}
+
+void RayTracer::Sphere::setRadius(double radius) {
+    _radius = radius;
+}
+
+void RayTracer::Sphere::setMaterial(std::shared_ptr<IMaterial> material) {
+    _material = std::move(material);
+}
 
 bool RayTracer::Sphere::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const {
     Math::Vector3D oc = ray.origin - _center;
@@ -38,10 +49,12 @@ void RayTracer::Sphere::translate(const Math::Vector3D &v) {
     _center = _center + v;
 }
 
-void RayTracer::Sphere::rotate(const Math::Vector3D &, double) {
-    // une sphère ne change pas d’apparence après rotation
-}
+void RayTracer::Sphere::rotate(const Math::Vector3D &, double) {}
 
 std::shared_ptr<RayTracer::IMaterial> RayTracer::Sphere::getMaterial() const {
     return _material;
+}
+
+extern "C" std::unique_ptr<RayTracer::IPrimitive> create() {
+    return std::make_unique<RayTracer::Sphere>();
 }

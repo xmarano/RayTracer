@@ -4,30 +4,36 @@
 ** File description:
 ** Cone.cpp
 */
-#include "../include/Cone.hpp"
+
+#include "Cone.hpp"
 #include <cmath>
+#include "../../include/IMaterial.hpp"
+
+RayTracer::Cone::Cone()
+    : _apex(Math::Point3D(0, 0, 0)),
+      _height(1.0),
+      _radius(1.0),
+      _axis(Math::Vector3D(0, 1, 0)),
+      _material(nullptr)
+{}
 
 RayTracer::Cone::Cone(const Math::Point3D &apex, double height, double radius, std::shared_ptr<RayTracer::IMaterial> material)
     : _apex(apex), _height(height), _radius(radius), _material(std::move(material))
 {}
 
-void RayTracer::Cone::translate(const Math::Vector3D &v)
-{
+void RayTracer::Cone::translate(const Math::Vector3D &v) {
     _apex = _apex + v;
 }
 
-void RayTracer::Cone::rotate(const Math::Vector3D &axis, double angleDegrees)
-{
+void RayTracer::Cone::rotate(const Math::Vector3D &axis, double angleDegrees) {
     _axis = Math::rotateVector(_axis, axis, angleDegrees);
 }
 
-std::shared_ptr<RayTracer::IMaterial> RayTracer::Cone::getMaterial() const
-{
+std::shared_ptr<RayTracer::IMaterial> RayTracer::Cone::getMaterial() const {
     return _material;
 }
 
-bool RayTracer::Cone::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const
-{
+bool RayTracer::Cone::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const {
     Math::Vector3D oc = ray.origin - _apex;
     double k = _radius / _height;
     k = k * k;
@@ -69,10 +75,24 @@ bool RayTracer::Cone::intersect(const Ray &ray, double &t, Math::Point3D &hitPoi
     Math::Vector3D tmp = hitPoint - _apex;
     tmp.y = -(k * std::sqrt(tmp.x * tmp.x + tmp.z * tmp.z));
     double length = std::sqrt(tmp.x * tmp.x + tmp.y * tmp.y + tmp.z * tmp.z);
-    if (length != 0)
-        normal = tmp / length;
-    else
-        normal = tmp;
+    normal = (length != 0) ? tmp / length : tmp;
 
     return true;
+}
+
+
+void RayTracer::Cone::setPosition(const Math::Point3D &pos) {
+    _apex = pos;
+}
+
+void RayTracer::Cone::setRadius(double r) {
+    _radius = r;
+}
+
+void RayTracer::Cone::setMaterial(std::shared_ptr<IMaterial> material) {
+    _material = std::move(material);
+}
+
+extern "C" std::unique_ptr<RayTracer::IPrimitive> create() {
+    return std::make_unique<RayTracer::Cone>();
 }
