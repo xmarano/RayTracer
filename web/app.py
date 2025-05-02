@@ -111,10 +111,15 @@ def set_configuration():
         f.write("};\n")
 
     # Run raytracer
+    raytracer_executable = ""
+    if os.uname().sysname == "Darwin":
+        raytracer_executable = "./raytracer_web_darwin"
+    else:
+        raytracer_executable = "./raytracer_web_linux"
     with open(PPM_FILE, "wb") as ppm_out:
-        subprocess.run(["./raytracer_web", CFG_FILE, "-w"], check=True, stdout=ppm_out)
+        subprocess.run([raytracer_executable, CFG_FILE, "-w"], check=True, stdout=ppm_out)
 
-    subprocess.run(["magick", PPM_FILE, PNG_FILE], check=True)
+    subprocess.run(["convert", PPM_FILE, PNG_FILE], check=True)
 
     return redirect(url_for("index"))
 

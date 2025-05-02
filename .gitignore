@@ -4,6 +4,7 @@ file.py
 a.out
 
 raytracer
+render.ppm
 coverage.txt
 *.o
 *.gcda
