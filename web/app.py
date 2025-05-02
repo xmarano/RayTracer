@@ -1,5 +1,6 @@
 import os
 import subprocess
+from time import time
 from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__, static_folder="static")
@@ -10,7 +11,8 @@ PNG_FILE = os.path.join("static", "render.png")
 
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html", img_src=url_for('static', filename='render.png'))
+    version = int(time())
+    return render_template("index.html", img_src=url_for('static', filename='render.png'), version=version)
 
 @app.route("/set_configuration", methods=["POST"])
 def set_configuration():

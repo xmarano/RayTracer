@@ -122,9 +122,9 @@
             <div class="lights">
                 <h2>Lights:</h2>
                 <label>Ambient:</label>
-                <input type="number" name="light_ambient" placeholder="0.2" min="0" max="1" step="0.1" />
+                <input type="number" name="light_ambient" placeholder="0.2" min="0" step="0.1" />
                 <label>Diffuse:</label>
-                <input type="number" name="light_diffuse" placeholder="0.8" min="0" max="1" step="0.1" />
+                <input type="number" name="light_diffuse" placeholder="0.8" min="0" step="0.1" />
 
                 <h4>Point:</h4>
                 <label>x:</label>
@@ -157,7 +157,7 @@
 
     <div id="right">
         <h1>Render</h1>
-        <img src="{{ img_src }}" alt="Render Image" />
+        <img src="{{ img_src }}?v={{ version }}" alt="Render Image"/>
     </div>
 </body>
 
