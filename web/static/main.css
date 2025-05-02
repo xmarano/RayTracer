@@ -1,0 +1,57 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    box-sizing: border-box;
+}
+
+#left, #right {
+    flex: 0 0 50%;
+}
+
+#left {
+    border-right: 1px solid #ccc;
+}
+
+/* #right {
+
+} */
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+input[type="number"],select {
+    width: 70px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+h2 {
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+h4 {
+    margin: 0;
+}
+
+input {
+    margin-bottom: 10px;
+}
+
+button {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+}
