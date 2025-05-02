@@ -1,10 +1,10 @@
 .vscode
 .DS_Store
+file.py
 a.out
 
 raytracer
 coverage.txt
-*.py
 *.o
 *.gcda
 *.gcno
