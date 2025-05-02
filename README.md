@@ -15,3 +15,8 @@ Linux
 ```
 sudo apt-get install imagemagick
 ```
+temporary
+```
+sudo apt update
+sudo apt install -y build-essential libsfml-dev libconfig++-dev imagemagick
+```
