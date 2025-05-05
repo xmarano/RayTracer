@@ -18,6 +18,8 @@
 #include "../include/DirectionalLight.hpp"
 #include "../include/PointLight.hpp"
 #include "../include/Sphere.hpp"
+#include "../include/Cylinder.hpp"
+#include "../include/Cone.hpp"
 #include "../include/Plane.hpp"
 #include "../include/Camera.hpp"
 #include "../include/Scene.hpp"
@@ -78,6 +80,24 @@ void Main::debug_config(const Config::Scene &cfg)
                   << "  couleur = (" << s.color.r << ", " << s.color.g << ", " << s.color.b << ")\n";
     }
 
+    std::cout << "CYLINDERS:\n";
+    for (const auto &c : cfg.cylinders) {
+        std::cout << "base = (" << c.base.x << ", " << c.base.y << ", " << c.base.z << ")"
+                  << "  axe = (" << c.axis.x << ", " << c.axis.y << ", " << c.axis.z << ")"
+                  << "  rayon = " << c.radius
+                  << "  hauteur = " << c.height
+                  << "  couleur = (" << c.color.r << ", " << c.color.g << ", " << c.color.b << ")\n";
+    }
+
+    std::cout << "CONES:\n";
+    for (const auto &c : cfg.cones) {
+        std::cout << "apex = (" << c.apex.x << ", " << c.apex.y << ", " << c.apex.z << ")"
+                  << "  axe = (" << c.axis.x << ", " << c.axis.y << ", " << c.axis.z << ")"
+                  << "  rayon = " << c.radius
+                  << "  hauteur = " << c.height
+                  << "  couleur = (" << c.color.r << ", " << c.color.g << ", " << c.color.b << ")\n";
+    }
+
     std::cout << "PLANES:\n";
     for (const auto &p : cfg.planes) {
         std::cout << "axe = '" << p.axis << "'"
@@ -86,8 +106,7 @@ void Main::debug_config(const Config::Scene &cfg)
     }
 
     std::cout << "LIGHTS:\n";
-    std::cout << "ambient = " << cfg.ambient
-              << "  diffuse = " << cfg.diffuse << "\n";
+    std::cout << "ambient = " << cfg.ambient << "  diffuse = " << cfg.diffuse << "\n";
 }
 
 void Main::calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM)
@@ -137,12 +156,37 @@ void Main::calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM)
         );
     }
 
+    // Add spheres
     for (const auto &s : cfg.spheres) {
         scene.addObject(
             std::make_shared<RayTracer::Sphere>(
                 s.center,
                 s.radius,
                 std::make_shared<RayTracer::FlatColor>(s.color)
+            )
+        );
+    }
+
+    // Add cylinders
+    for (const auto &c : cfg.cylinders) {
+        scene.addObject(
+            std::make_shared<RayTracer::Cylinder>(
+                c.base,
+                c.radius,
+                c.height,
+                std::make_shared<RayTracer::FlatColor>(c.color)
+            )
+        );
+    }
+
+    // Add cones
+    for (const auto &c : cfg.cones) {
+        scene.addObject(
+            std::make_shared<RayTracer::Cone>(
+                c.apex,
+                c.height,
+                c.radius,
+                std::make_shared<RayTracer::FlatColor>(c.color)
             )
         );
     }

@@ -36,6 +36,28 @@ namespace Config {
             Sphere() : center(), radius(0.0), color() {}
     };
 
+    class Cylinder {
+        public:
+            Math::Point3D base;
+            Math::Vector3D axis;
+            double radius;
+            double height;
+            Color color;
+
+            Cylinder() : base(), axis(), radius(0.0), height(0.0), color() {}
+    };
+
+    class Cone {
+        public:
+            Math::Point3D apex;
+            Math::Vector3D axis;
+            double radius;
+            double height;
+            Color color;
+
+            Cone() : apex(), axis(), radius(0.0), height(0.0), color() {}
+    };
+
     class Plane {
         public:
             char axis;
@@ -60,6 +82,8 @@ namespace Config {
         public:
             Camera camera;
             std::vector<Sphere> spheres;
+            std::vector<Cylinder> cylinders;
+            std::vector<Cone> cones;
             std::vector<Plane> planes;
             double ambient;
             double diffuse;

@@ -60,6 +60,68 @@ Config::Scene Config::parseScene(const std::string &file)
             scene.spheres.push_back(s);
         }
 
+        // Cylinders
+        const libconfig::Setting &cylinders = cfg.lookup("primitives.cylinders");
+        for (int i = 0; i < cylinders.getLength(); ++i) {
+            const libconfig::Setting &config_cylinder = cylinders[i];
+            Config::Cylinder c;
+
+            // base
+            const libconfig::Setting &base = config_cylinder.lookup("base");
+            c.base.x = base.lookup("x");
+            c.base.y = base.lookup("y");
+            c.base.z = base.lookup("z");
+            // axis
+            const libconfig::Setting &axis = config_cylinder.lookup("axis");
+            c.axis.x = axis.lookup("x");
+            c.axis.y = axis.lookup("y");
+            c.axis.z = axis.lookup("z");
+
+            // radius
+            c.radius = config_cylinder.lookup("radius");
+            // height
+            c.height = config_cylinder.lookup("height");
+            // color
+            const libconfig::Setting &config_color = config_cylinder.lookup("color");
+            c.color = Color(
+                config_color.lookup("r"),
+                config_color.lookup("g"),
+                config_color.lookup("b")
+            );
+            scene.cylinders.push_back(c);
+        }
+
+        // Cones
+        const libconfig::Setting &cones = cfg.lookup("primitives.cones");
+        for (int i = 0; i < cones.getLength(); ++i) {
+            const libconfig::Setting &config_cone = cones[i];
+            Config::Cone c;
+
+            // apex
+            const libconfig::Setting &apex = config_cone.lookup("apex");
+            c.apex.x = apex.lookup("x");
+            c.apex.y = apex.lookup("y");
+            c.apex.z = apex.lookup("z");
+            // axis
+            const libconfig::Setting &axis = config_cone.lookup("axis");
+            c.axis.x = axis.lookup("x");
+            c.axis.y = axis.lookup("y");
+            c.axis.z = axis.lookup("z");
+
+            // radius
+            c.radius = config_cone.lookup("radius");
+            // height
+            c.height = config_cone.lookup("height");
+            // color
+            const libconfig::Setting &config_color = config_cone.lookup("color");
+            c.color = Color(
+                config_color.lookup("r"),
+                config_color.lookup("g"),
+                config_color.lookup("b")
+            );
+            scene.cones.push_back(c);
+        }
+
         // Planes
         const libconfig::Setting &planes = cfg.lookup("primitives.planes");
         for (int i = 0; i < planes.getLength(); ++i) {
