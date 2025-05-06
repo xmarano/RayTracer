@@ -1,24 +1,15 @@
-/*=====================================
-  0) Import font Inter
-=====================================*/
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-/*=====================================
-  1) Variables globales
-=====================================*/
 :root {
-  --clr-bg:     #f4f4f4;
-  --clr-white:  #ffffff;
-  --clr-black:  #000000;
-  --clr-gray:   #e5e5e5;
-  --clr-text:   #111111;
-  --clr-accent: #00e58c;
-  --font-base:  'Inter', sans-serif;
+  --clr-bg:       #f4f4f4;
+  --clr-white:    #ffffff;
+  --clr-black:    #000000;
+  --clr-gray:     #e5e5e5;
+  --clr-text:     #111111;
+  --clr-accent:   #00e58c;
+  --font-base:    'Inter', sans-serif;
 }
 
-/*=====================================
-  2) Reset & layout de base
-=====================================*/
 * {
   margin: 0;
   padding: 0;
@@ -29,13 +20,13 @@ body {
   display: flex;
   height: 100vh;
   background: var(--clr-bg);
-  color: var(--clr-text);
   font-family: var(--font-base);
+  color: var(--clr-text);
   overflow: hidden;
 }
 
 #left, #right {
-  flex: 0 0 50%;
+  flex: 1;
   overflow-y: auto;
 }
 
@@ -54,9 +45,6 @@ body {
   padding: 2.5rem;
 }
 
-/*=====================================
-  3) Titres stylés avec soulignement accent
-=====================================*/
 h1, h2 {
   position: relative;
   font-weight: 700;
@@ -70,10 +58,8 @@ h1 {
 h1::after {
   content: '';
   position: absolute;
-  left: 0;
-  bottom: -0.4rem;
-  width: 3rem;
-  height: 4px;
+  left: 0; bottom: -0.4rem;
+  width: 3rem; height: 4px;
   background: var(--clr-accent);
 }
 
@@ -84,10 +70,8 @@ h2 {
 h2::after {
   content: '';
   position: absolute;
-  left: 0;
-  bottom: -0.3rem;
-  width: 2.5rem;
-  height: 3px;
+  left: 0; bottom: -0.3rem;
+  width: 2.5rem; height: 3px;
   background: var(--clr-accent);
 }
 
@@ -97,23 +81,76 @@ h4 {
   margin: 1.5rem 0 0.5rem;
 }
 
-/*=====================================
-  4) Labels & inputs en « pills »
-=====================================*/
-label {
-  display: inline-block;
-  font-size: 0.9rem;
-  margin: 0.4rem 0.5rem 0.4rem 0;
+.camera, .primitives, .lights {
+  position: relative;
+  background: var(--clr-white);
+  border-radius: 32px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow:
+    inset 0 4px 8px rgba(0,0,0,0.03),
+    0 8px 16px rgba(0,0,0,0.06),
+    0 16px 32px rgba(0,0,0,0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 0;
 }
 
+.camera::before,
+.primitives::before,
+.lights::before {
+  content: '';
+  position: absolute;
+  top: -4px; left: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  border-radius: 36px;
+  background: linear-gradient(
+    135deg,
+    rgba(0,229,140,0.4) 0%,
+    rgba(0,229,140,0) 60%
+  );
+  filter: blur(20px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.camera:hover::before,
+.primitives:hover::before,
+.lights:hover::before {
+  opacity: 1;
+}
+
+.camera:hover,
+.primitives:hover,
+.lights:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow:
+    inset 0 4px 12px rgba(0,0,0,0.04),
+    0 12px 24px rgba(0,0,0,0.08),
+    0 24px 48px rgba(0,0,0,0.06);
+}
+
+label,
 input[type="number"],
 select {
+  display: inline-block;
+  vertical-align: middle;
+  margin-bottom: 1rem;
+}
+
+label {
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+input[type="number"],
+select {
+  margin-right: 1.5rem;
   appearance: none;
   border: 1px solid var(--clr-gray);
   border-radius: 999px;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
-  margin: 0.4rem 1rem 0.4rem 0;
   min-width: 5rem;
   transition: border-color 0.2s ease;
 }
@@ -124,9 +161,12 @@ select:focus {
   border-color: var(--clr-accent);
 }
 
-/*=====================================
-  5) Bouton Submit – pill + pseudo-ombre colorée
-=====================================*/
+.camera h4,
+.primitives h4,
+.lights h4 {
+  margin: 2rem 0 0.75rem;
+}
+
 button[type="submit"] {
   position: relative;
   display: inline-block;
@@ -143,11 +183,8 @@ button[type="submit"] {
 
 button[type="submit"]::after {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
   background: var(--clr-accent);
   border-radius: 999px;
   z-index: -1;
@@ -161,25 +198,27 @@ button[type="submit"]:hover {
 button[type="submit"]:hover::after {
   transform: translate(4px, 4px);
 }
-
-/*=====================================
-  6) Rendu 3D
-=====================================*/
 #right h1 {
   align-self: flex-start;
+  font-size: 1.75rem;
+  font-weight: 700;
+  position: relative;
   margin-bottom: 1rem;
+}
+#right h1::after {
+  content: '';
+  position: absolute; left: 0; bottom: -0.4rem;
+  width: 3rem; height: 4px;
+  background: var(--clr-accent);
 }
 
 #right img,
 #right canvas {
-  max-width: 100%;
+  width: 100%;
   border-radius: 8px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
-/*=====================================
-  7) Responsive (tablettes & mobiles)
-=====================================*/
 @media (max-width: 768px) {
   body {
     flex-direction: column;
@@ -187,9 +226,5 @@ button[type="submit"]:hover::after {
   #left {
     border-right: none;
     border-bottom: 1px solid var(--clr-gray);
-  }
-  #left, #right {
-    flex: 1 1 auto;
-    height: auto;
   }
 }
