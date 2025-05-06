@@ -20,6 +20,7 @@
 #include "../include/Sphere.hpp"
 #include "../include/Cylinder.hpp"
 #include "../include/Cone.hpp"
+#include "../include/Triangle.hpp"
 #include "../include/Plane.hpp"
 #include "../include/Camera.hpp"
 #include "../include/Scene.hpp"
@@ -171,6 +172,18 @@ void Main::calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM)
                 s.center,
                 s.radius,
                 std::make_shared<RayTracer::FlatColor>(s.color)
+            )
+        );
+    }
+
+    // Add triangles
+    for (const auto &t : cfg.triangles) {
+        scene.addObject(
+            std::make_shared<RayTracer::Triangle>(
+                t.a,
+                t.b,
+                t.c,
+                std::make_shared<RayTracer::FlatColor>(t.color)
             )
         );
     }
