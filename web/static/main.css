@@ -1,57 +1,195 @@
+/*=====================================
+  0) Import font Inter
+=====================================*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/*=====================================
+  1) Variables globales
+=====================================*/
+:root {
+  --clr-bg:     #f4f4f4;
+  --clr-white:  #ffffff;
+  --clr-black:  #000000;
+  --clr-gray:   #e5e5e5;
+  --clr-text:   #111111;
+  --clr-accent: #00e58c;
+  --font-base:  'Inter', sans-serif;
+}
+
+/*=====================================
+  2) Reset & layout de base
+=====================================*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    overflow-x: hidden;
-    display: flex;
-    box-sizing: border-box;
+  display: flex;
+  height: 100vh;
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  font-family: var(--font-base);
+  overflow: hidden;
 }
 
 #left, #right {
-    flex: 0 0 50%;
+  flex: 0 0 50%;
+  overflow-y: auto;
 }
 
 #left {
-    border-right: 1px solid #ccc;
+  background: var(--clr-white);
+  padding: 2.5rem;
+  border-right: 1px solid var(--clr-gray);
 }
 
-/* #right {
-
-} */
-
-img {
-    display: block;
-    max-width: 100%;
-    height: auto;
+#right {
+  background: var(--clr-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2.5rem;
 }
 
-input[type="number"],select {
-    width: 70px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
+/*=====================================
+  3) Titres stylés avec soulignement accent
+=====================================*/
+h1, h2 {
+  position: relative;
+  font-weight: 700;
+  color: var(--clr-black);
+}
+
+h1 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+h1::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.4rem;
+  width: 3rem;
+  height: 4px;
+  background: var(--clr-accent);
 }
 
 h2 {
-    margin: 0;
-    margin-bottom: 5px;
+  font-size: 1.25rem;
+  margin: 2rem 0 1rem;
+}
+h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.3rem;
+  width: 2.5rem;
+  height: 3px;
+  background: var(--clr-accent);
 }
 
 h4 {
-    margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 1.5rem 0 0.5rem;
 }
 
-input {
-    margin-bottom: 10px;
+/*=====================================
+  4) Labels & inputs en « pills »
+=====================================*/
+label {
+  display: inline-block;
+  font-size: 0.9rem;
+  margin: 0.4rem 0.5rem 0.4rem 0;
 }
 
-button {
-    margin-bottom: 10px;
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    display: block;
-    margin: 0 auto;
+input[type="number"],
+select {
+  appearance: none;
+  border: 1px solid var(--clr-gray);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  margin: 0.4rem 1rem 0.4rem 0;
+  min-width: 5rem;
+  transition: border-color 0.2s ease;
+}
+
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--clr-accent);
+}
+
+/*=====================================
+  5) Bouton Submit – pill + pseudo-ombre colorée
+=====================================*/
+button[type="submit"] {
+  position: relative;
+  display: inline-block;
+  margin: 2rem 0;
+  padding: 0.75rem 2rem;
+  background: var(--clr-white);
+  color: var(--clr-black);
+  font-weight: 600;
+  border: 1px solid var(--clr-black);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+button[type="submit"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--clr-accent);
+  border-radius: 999px;
+  z-index: -1;
+  transform: translate(6px, 6px);
+  transition: transform 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  transform: translate(-2px, -2px);
+}
+button[type="submit"]:hover::after {
+  transform: translate(4px, 4px);
+}
+
+/*=====================================
+  6) Rendu 3D
+=====================================*/
+#right h1 {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+}
+
+#right img,
+#right canvas {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/*=====================================
+  7) Responsive (tablettes & mobiles)
+=====================================*/
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+  #left {
+    border-right: none;
+    border-bottom: 1px solid var(--clr-gray);
+  }
+  #left, #right {
+    flex: 1 1 auto;
+    height: auto;
+  }
 }
