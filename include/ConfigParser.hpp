@@ -58,6 +58,16 @@ namespace Config {
             Cone() : apex(), axis(), radius(0.0), height(0.0), color() {}
     };
 
+    class Triangle {
+        public:
+            Math::Point3D a;
+            Math::Point3D b;
+            Math::Point3D c;
+            Color color;
+
+            Triangle() : a(), b(), c(), color() {}
+    };
+
     class Plane {
         public:
             char axis;
@@ -84,6 +94,7 @@ namespace Config {
             std::vector<Sphere> spheres;
             std::vector<Cylinder> cylinders;
             std::vector<Cone> cones;
+            std::vector<Triangle> triangles;
             std::vector<Plane> planes;
             double ambient;
             double diffuse;

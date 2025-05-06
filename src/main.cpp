@@ -98,6 +98,14 @@ void Main::debug_config(const Config::Scene &cfg)
                   << "  couleur = (" << c.color.r << ", " << c.color.g << ", " << c.color.b << ")\n";
     }
 
+    std::cout << "TRIANGLES:\n";
+    for (const auto &t : cfg.triangles) {
+        std::cout << "a = (" << t.a.x << ", " << t.a.y << ", " << t.a.z << ")"
+                  << "  b = (" << t.b.x << ", " << t.b.y << ", " << t.b.z << ")"
+                  << "  c = (" << t.c.x << ", " << t.c.y << ", " << t.c.z << ")"
+                  << "  couleur = (" << t.color.r << ", " << t.color.g << ", " << t.color.b << ")\n";
+    }
+
     std::cout << "PLANES:\n";
     for (const auto &p : cfg.planes) {
         std::cout << "axe = '" << p.axis << "'"
