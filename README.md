@@ -9,7 +9,7 @@
 
 ### Documentation 🫲 [`Website`](https://xmarano.github.io/RayTracer) 🫱
 
-#### Requirements
+## Requirements
 MacOS
 ```
 brew install imagemagick
@@ -19,8 +19,14 @@ Linux
 ```
 sudo apt-get install imagemagick
 ```
-temporary
+
+RaspberryPi (Linux)
 ```
 sudo apt update
 sudo apt install -y build-essential libsfml-dev libconfig++-dev imagemagick
+```
+
+## Create ✨animation✨
+```
+python3.10 create_animation.py
 ```

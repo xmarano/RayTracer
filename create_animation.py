@@ -49,22 +49,22 @@ def create_config_files(img):
         z2 = cz + R * math.sin(theta + math.pi)
 
         cfg = congif(x1, cy, z1, x2, cy, z2)
-        with open(f"scenes/config_gif/{i:02}.cfg", "w") as f:
+        with open(f"scenes/config_animation/{i:02}.cfg", "w") as f:
             f.write(cfg)
     print("Config files created for dual orbit")
 
 def create_ppm_files(img):
     for i in tqdm(range(img), desc="Creating PPM files"):
-        os.system(f"./raytracer scenes/config_gif/{i:02}.cfg -w > scenes/config_gif/{i:02}.ppm")
+        os.system(f"./raytracer scenes/config_animation/{i:02}.cfg -w > scenes/config_animation/{i:02}.ppm")
     print("PPM files created")
 
 def convert_to_gif(img):
     for i in tqdm(range(img), desc="Converting to PNG"):
-        os.system(f"magick scenes/config_gif/{i:02}.ppm scenes/config_gif/{i:02}.png")
+        os.system(f"magick scenes/config_animation/{i:02}.ppm scenes/config_animation/{i:02}.png")
     sleep(1)
-    os.system("magick -delay 5 -loop 0 scenes/config_gif/*.png scene.gif")
+    os.system("magick -delay 5 -loop 0 scenes/config_animation/*.png scene.gif")
     sleep(1)
-    os.system("rm scenes/config_gif/*")
+    os.system("rm scenes/config_animation/*")
     print("GIF file created [scene.gif]")
 
 if __name__ == "__main__":
