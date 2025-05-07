@@ -46,16 +46,32 @@ void Main::printHelp()
 
 void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebug, bool &wantPPM)
 {
-    if (argc >= 2)
-        file = argv[1];
+    if (argc == 2 && std::string(argv[1]) == "unitest")
+        std::exit(0);
 
-    for (int i = 2; i < argc; ++i) {
-        if (std::string(argv[i]) == "-d") isDebug = true;
-        if (std::string(argv[i]) == "-w") wantPPM = true;
+    if (argc == 2 && std::string(argv[1]) == "-help") {
+        printHelp();
+        std::exit(0);
     }
 
-    if (!is_valid_cfg(file))
+    if (argc == 3 && std::string(argv[2]) == "-d") {
+        file = argv[1];
+        isDebug = true;
+        return;
+    }
+
+    if (argc == 3 && std::string(argv[2]) == "-w") {
+        wantPPM = true;
+    }
+
+    if (argc != 2 && !wantPPM) {
+        throw RayTracerException("USAGE: ./raytracer <SCENE_FILE>");
+    }
+
+    file = argv[1];
+    if (!is_valid_cfg(file)) {
         throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
+    }
 }
 
 void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg)

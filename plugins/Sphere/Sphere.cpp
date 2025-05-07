@@ -7,22 +7,26 @@
 #include "Sphere.hpp"
 #include <cmath>
 
-RayTracer::Sphere::Sphere()
-    : _center(Math::Point3D(0, 0, 0)), _radius(0.0), _material(nullptr) {}
+RayTracer::Sphere::Sphere() : _center(Math::Point3D(0, 0, 0)), _radius(0.0), _material(nullptr)
+{}
 
-void RayTracer::Sphere::setPosition(const Math::Point3D &pos) {
+void RayTracer::Sphere::setPosition(const Math::Point3D &pos)
+{
     _center = pos;
 }
 
-void RayTracer::Sphere::setRadius(double radius) {
+void RayTracer::Sphere::setRadius(double radius)
+{
     _radius = radius;
 }
 
-void RayTracer::Sphere::setMaterial(std::shared_ptr<IMaterial> material) {
+void RayTracer::Sphere::setMaterial(std::shared_ptr<IMaterial> material)
+{
     _material = std::move(material);
 }
 
-bool RayTracer::Sphere::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const {
+bool RayTracer::Sphere::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const
+{
     Math::Vector3D oc = ray.origin - _center;
     double a = ray.direction.dot(ray.direction);
     double b = 2.0 * oc.dot(ray.direction);
@@ -45,16 +49,19 @@ bool RayTracer::Sphere::intersect(const Ray &ray, double &t, Math::Point3D &hitP
     return true;
 }
 
-void RayTracer::Sphere::translate(const Math::Vector3D &v) {
+void RayTracer::Sphere::translate(const Math::Vector3D &v)
+{
     _center = _center + v;
 }
 
-void RayTracer::Sphere::rotate(const Math::Vector3D &, double) {}
+void RayTracer::Sphere::rotate(const Math::Vector3D &, double)
+{}
 
-std::shared_ptr<RayTracer::IMaterial> RayTracer::Sphere::getMaterial() const {
+std::shared_ptr<RayTracer::IMaterial> RayTracer::Sphere::getMaterial() const
+{
     return _material;
 }
 
-extern "C" std::unique_ptr<RayTracer::IPrimitive> create() {
-    return std::make_unique<RayTracer::Sphere>();
+extern "C" RayTracer::IPrimitive* create() {
+    return new RayTracer::Sphere();
 }

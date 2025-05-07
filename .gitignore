@@ -8,6 +8,7 @@ raytracer
 render.ppm
 coverage.txt
 *.o
+*.so
 *.gcda
 *.gcno
 *.gcov

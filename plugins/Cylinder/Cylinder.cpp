@@ -4,42 +4,34 @@
 ** File description:
 ** Cylinder.cpp
 */
-
 #include "Cylinder.hpp"
 #include <cmath>
 #include "../../include/IMaterial.hpp"
 
-RayTracer::Cylinder::Cylinder()
-    : _baseCenter(Math::Point3D(0, 0, 0)),
-      _radius(1.0),
-      _height(1.0),
-      _axis(Math::Vector3D(0, 1, 0)),
-      _center(Math::Point3D(0, 0, 0)),
-      _material(nullptr)
+RayTracer::Cylinder::Cylinder() : _baseCenter(Math::Point3D(0, 0, 0)), _radius(1.0), _height(1.0), _axis(Math::Vector3D(0, 1, 0)), _center(Math::Point3D(0, 0, 0)), _material(nullptr)
 {}
 
 RayTracer::Cylinder::Cylinder(const Math::Point3D &baseCenter, double radius, double height, std::shared_ptr<RayTracer::IMaterial> material)
-    : _baseCenter(baseCenter),
-      _radius(radius),
-      _height(height),
-      _axis(Math::Vector3D(0, 1, 0)),
-      _center(baseCenter),
-      _material(std::move(material))
+    : _baseCenter(baseCenter), _radius(radius), _height(height), _axis(Math::Vector3D(0, 1, 0)), _center(baseCenter), _material(std::move(material))
 {}
 
-void RayTracer::Cylinder::translate(const Math::Vector3D &v) {
+void RayTracer::Cylinder::translate(const Math::Vector3D &v)
+{
     _baseCenter = _baseCenter + v;
 }
 
-void RayTracer::Cylinder::rotate(const Math::Vector3D &axis, double angleDegrees) {
+void RayTracer::Cylinder::rotate(const Math::Vector3D &axis, double angleDegrees)
+{
     _axis = Math::rotateVector(_axis, axis, angleDegrees);
 }
 
-std::shared_ptr<RayTracer::IMaterial> RayTracer::Cylinder::getMaterial() const {
+std::shared_ptr<RayTracer::IMaterial> RayTracer::Cylinder::getMaterial() const
+{
     return _material;
 }
 
-bool RayTracer::Cylinder::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const {
+bool RayTracer::Cylinder::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const
+{
     Math::Vector3D oc = ray.origin - _center;
 
     double a = ray.direction.x * ray.direction.x + ray.direction.z * ray.direction.z;
@@ -77,19 +69,23 @@ bool RayTracer::Cylinder::intersect(const Ray &ray, double &t, Math::Point3D &hi
     return true;
 }
 
-void RayTracer::Cylinder::setPosition(const Math::Point3D &pos) {
+void RayTracer::Cylinder::setPosition(const Math::Point3D &pos)
+{
     _center = pos;
     _baseCenter = pos;
 }
 
-void RayTracer::Cylinder::setRadius(double r) {
+void RayTracer::Cylinder::setRadius(double r)
+{
     _radius = r;
 }
 
-void RayTracer::Cylinder::setMaterial(std::shared_ptr<IMaterial> material) {
+void RayTracer::Cylinder::setMaterial(std::shared_ptr<IMaterial> material)
+{
     _material = std::move(material);
 }
 
-extern "C" std::unique_ptr<RayTracer::IPrimitive> create() {
-    return std::make_unique<RayTracer::Cylinder>();
+extern "C" RayTracer::IPrimitive* create()
+{
+    return new RayTracer::Cylinder();
 }

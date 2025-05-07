@@ -8,7 +8,8 @@
 #include <cmath>
 #include "../../include/IMaterial.hpp"
 
-RayTracer::Plane::Plane() {}
+RayTracer::Plane::Plane()
+{}
 
 RayTracer::Plane::Plane(const Math::Point3D &point, const Math::Vector3D &normal, std::shared_ptr<IMaterial> material)
     : _point(point), _normal(normal), _material(std::move(material))
@@ -52,8 +53,7 @@ void RayTracer::Plane::setPosition(const Math::Point3D &pos)
 }
 
 void RayTracer::Plane::setRadius(double)
-{
-}
+{}
 
 void RayTracer::Plane::setMaterial(std::shared_ptr<IMaterial> material)
 {
@@ -67,8 +67,7 @@ void RayTracer::Plane::setAxis(char axis)
     else if (axis == 'Z') _normal = Math::Vector3D(0, 0, 1);
 }
 
-extern "C" std::unique_ptr<RayTracer::IPrimitive> create()
+extern "C" RayTracer::IPrimitive* create()
 {
-    return std::make_unique<RayTracer::Plane>();
+    return new RayTracer::Plane();
 }
-
