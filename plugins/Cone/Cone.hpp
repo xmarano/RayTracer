@@ -38,5 +38,5 @@ namespace RayTracer {
 }
 
 extern "C" {
-    RayTracer::IPrimitive* create();
+    std::unique_ptr<RayTracer::IPrimitive> create();
 }

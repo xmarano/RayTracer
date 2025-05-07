@@ -85,7 +85,7 @@ void RayTracer::Cylinder::setMaterial(std::shared_ptr<IMaterial> material)
     _material = std::move(material);
 }
 
-extern "C" RayTracer::IPrimitive* create()
+extern "C" std::unique_ptr<RayTracer::IPrimitive> create()
 {
-    return new RayTracer::Cylinder();
+    return std::make_unique<RayTracer::Cylinder>();
 }

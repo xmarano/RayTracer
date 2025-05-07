@@ -6,7 +6,7 @@
 ##
 NAME        = raytracer
 
-FLAGS       = -std=c++17 -Wall -Wextra -Iinclude
+FLAGS       = -std=c++17 -Wall -Wextra -Wno-return-type-c-linkage -Iinclude
 LDFLAGS     = -L/opt/homebrew/lib -lconfig++
 SFML        = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
@@ -21,8 +21,7 @@ SRC         = src/main.cpp \
               src/Utils.cpp \
               src/Math3D.cpp \
               src/AmbientLight.cpp \
-              src/PointLight.cpp    \
-
+              src/PointLight.cpp \
 
 OBJ         = $(SRC:.cpp=.o)
 

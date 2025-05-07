@@ -100,7 +100,7 @@ void RayTracer::Cone::setHeight(double height)
     _height = height;
 }
 
-extern "C" RayTracer::IPrimitive* create()
+extern "C" std::unique_ptr<RayTracer::IPrimitive> create()
 {
-    return new RayTracer::Cone();
+    return std::make_unique<RayTracer::Cone>();
 }

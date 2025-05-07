@@ -67,7 +67,7 @@ void RayTracer::Plane::setAxis(char axis)
     else if (axis == 'Z') _normal = Math::Vector3D(0, 0, 1);
 }
 
-extern "C" RayTracer::IPrimitive* create()
+extern "C" std::unique_ptr<RayTracer::IPrimitive> create()
 {
-    return new RayTracer::Plane();
+    return std::make_unique<RayTracer::Plane>();
 }

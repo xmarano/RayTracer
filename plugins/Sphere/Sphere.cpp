@@ -62,6 +62,7 @@ std::shared_ptr<RayTracer::IMaterial> RayTracer::Sphere::getMaterial() const
     return _material;
 }
 
-extern "C" RayTracer::IPrimitive* create() {
-    return new RayTracer::Sphere();
+extern "C" std::unique_ptr<RayTracer::IPrimitive> create()
+{
+    return std::make_unique<RayTracer::Sphere>();
 }
