@@ -4,49 +4,64 @@
 ## File description:
 ## Makefile
 ##
-NAME		= raytracer
+NAME        = raytracer
 
-FLAGS		= -std=c++17 -Wall -Wextra -Iinclude
-LDFLAGS		= -L/opt/homebrew/lib -lconfig++
-SFML		= -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+FLAGS       = -std=c++17 -Wall -Wextra -Iinclude
+LDFLAGS     = -L/opt/homebrew/lib -lconfig++
+SFML        = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
-SRC			= src/main.cpp \
-				src/ConfigParser.cpp \
-				src/Display.cpp \
-				src/Ray.cpp \
-				src/Sphere.cpp \
-				src/Plane.cpp \
-				src/DirectionalLight.cpp \
-				src/Camera.cpp \
-				src/Scene.cpp \
-				src/Material.cpp \
-				src/Utils.cpp \
-				src/Math3D.cpp \
-				src/AmbientLight.cpp \
-				src/Cone.cpp \
-				src/Triangle.cpp \
-				src/Cylinder.cpp \
-				src/PointLight.cpp
+SRC         = src/main.cpp \
+              src/ConfigParser.cpp \
+              src/Display.cpp \
+              src/Ray.cpp \
+              src/DirectionalLight.cpp \
+              src/Camera.cpp \
+              src/Scene.cpp \
+              src/Material.cpp \
+              src/Utils.cpp \
+              src/Math3D.cpp \
+              src/AmbientLight.cpp \
+              src/PointLight.cpp    \
 
-OBJ			= $(SRC:.cpp=.o)
 
-TEST_SRC	= criterion.cpp
-TEST_NAME	= unitests
+OBJ         = $(SRC:.cpp=.o)
 
-OS			:= $(shell uname -s)
+PLUGIN_SO   = plugins/libsphere.so \
+              plugins/libplane.so \
+              plugins/libcylinder.so \
+              plugins/libcone.so
+
+PLUGIN_DEP  = src/Math3D.cpp src/Material.cpp
+TEST_SRC    = criterion.cpp
+TEST_NAME   = unitests
+
+OS          := $(shell uname -s)
+
 ifeq ($(OS), Darwin)
-	T1		= -I /opt/homebrew/opt/criterion/include
-	T2		= -L /opt/homebrew/opt/criterion/lib
-	T3		= -lcriterion -Wno-deprecated-declarations -Wno-unused-parameter
-	TEST_FLAGS = $(T1) $(T2) $(T3)
+    T1      = -I /opt/homebrew/opt/criterion/include
+    T2      = -L /opt/homebrew/opt/criterion/lib
+    T3      = -lcriterion -Wno-deprecated-declarations -Wno-unused-parameter
+    TEST_FLAGS = $(T1) $(T2) $(T3)
 else
-	TEST_FLAGS = -lcriterion
+    TEST_FLAGS = -lcriterion
 endif
 
-all: $(NAME)
+all: $(NAME) $(PLUGIN_SO)
 
 $(NAME): $(OBJ)
-	g++ $(FLAGS) $(OBJ) -o $(NAME) $(SFML) $(LDFLAGS)
+	g++ $(FLAGS) $(OBJ) -o $(NAME) $(SFML) $(LDFLAGS) -ldl
+
+plugins/libsphere.so: plugins/Sphere/Sphere.cpp $(PLUGIN_DEP)
+	g++ $(FLAGS) -shared -fPIC -o $@ $^
+
+plugins/libplane.so: plugins/Plane/Plane.cpp $(PLUGIN_DEP)
+	g++ $(FLAGS) -shared -fPIC -o $@ $^
+
+plugins/libcylinder.so: plugins/Cylinder/Cylinder.cpp $(PLUGIN_DEP)
+	g++ $(FLAGS) -shared -fPIC -o $@ $^
+
+plugins/libcone.so: plugins/Cone/Cone.cpp $(PLUGIN_DEP)
+	g++ $(FLAGS) -shared -fPIC -o $@ $^
 
 %.o: %.cpp
 	g++ $(FLAGS) -c $< -o $@
@@ -63,6 +78,7 @@ tests_run: re
 
 clean:
 	rm -f $(OBJ)
+	rm -f $(PLUGIN_SO)
 
 fclean: clean
 	rm -f $(NAME) $(TEST_NAME) coverage.txt toto.ppm

@@ -4,8 +4,11 @@
 ** File description:
 ** Plane.cpp
 */
-#include "../include/Plane.hpp"
+#include "Plane.hpp"
 #include <cmath>
+#include "../../include/IMaterial.hpp"
+
+RayTracer::Plane::Plane() {}
 
 RayTracer::Plane::Plane(const Math::Point3D &point, const Math::Vector3D &normal, std::shared_ptr<IMaterial> material)
     : _point(point), _normal(normal), _material(std::move(material))
@@ -26,7 +29,8 @@ std::shared_ptr<RayTracer::IMaterial> RayTracer::Plane::getMaterial() const
     return _material;
 }
 
-bool RayTracer::Plane::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const {
+bool RayTracer::Plane::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const
+{
     double denom = _normal.dot(ray.direction);
 
     if (std::abs(denom) < 1e-6)
@@ -41,3 +45,30 @@ bool RayTracer::Plane::intersect(const Ray &ray, double &t, Math::Point3D &hitPo
     normal = _normal;
     return true;
 }
+
+void RayTracer::Plane::setPosition(const Math::Point3D &pos)
+{
+    _point = pos;
+}
+
+void RayTracer::Plane::setRadius(double)
+{
+}
+
+void RayTracer::Plane::setMaterial(std::shared_ptr<IMaterial> material)
+{
+    _material = std::move(material);
+}
+
+void RayTracer::Plane::setAxis(char axis)
+{
+    if (axis == 'X') _normal = Math::Vector3D(1, 0, 0);
+    else if (axis == 'Y') _normal = Math::Vector3D(0, 1, 0);
+    else if (axis == 'Z') _normal = Math::Vector3D(0, 0, 1);
+}
+
+extern "C" std::unique_ptr<RayTracer::IPrimitive> create()
+{
+    return std::make_unique<RayTracer::Plane>();
+}
+
