@@ -4,65 +4,201 @@
 ** File description:
 ** Main.cpp
 */
+
 #include <thread>
 #include <cmath>
-#include <algorithm>
-#include <limits>
+#include <dlfcn.h>
 #include "../include/Main.hpp"
 #include "../include/Exception.hpp"
 #include "../include/Utils.hpp"
 #include "../include/Display.hpp"
 #include "../include/ConfigParser.hpp"
 #include "../include/IMaterial.hpp"
+#include "../include/IPrimitive.hpp"
+#include "../include/Camera.hpp"
+#include "../include/Scene.hpp"
 #include "../include/AmbientLight.hpp"
 #include "../include/DirectionalLight.hpp"
 #include "../include/PointLight.hpp"
-#include "../include/Sphere.hpp"
-#include "../include/Cylinder.hpp"
-#include "../include/Cone.hpp"
-#include "../include/Plane.hpp"
-#include "../include/Camera.hpp"
-#include "../include/Scene.hpp"
+#include "../include/Color.hpp"
 
+using RayTracer::IPrimitive;
 
-void Main::printHelp()
-{
+std::unique_ptr<IPrimitive> loadPrimitive(const std::string &soName) {
+    void *handle = dlopen(("./plugins/" + soName).c_str(), RTLD_LAZY);
+    if (!handle)
+        throw RayTracerException("Cannot open plugin: " + std::string(dlerror()));
+
+    using CreateFunc = std::unique_ptr<IPrimitive>(*)();
+    CreateFunc create = reinterpret_cast<CreateFunc>(dlsym(handle, "create"));
+    if (!create)
+        throw RayTracerException("Cannot find create function: " + std::string(dlerror()));
+
+    return create();
+}
+
+void Main::printHelp() {
     std::cout << "USAGE: ./raytracer <SCENE_FILE> [-d] [-w]\n";
-    std::cout << "  SCENE_FILE: scene configuration (.cfg)\n";
     std::cout << "  -d : debug mode (print config)\n";
     std::cout << "  -w : write PPM to stdout (no window)\n";
 }
 
-void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebug, bool &wantPPM)
-{
-    if (argc == 2 && std::string(argv[1]) == "unitest")
-        std::exit(0);
-
-    if (argc == 2 && std::string(argv[1]) == "-help") {
-        printHelp();
-        std::exit(0);
-    }
-
-    if (argc == 3 && std::string(argv[2]) == "-d") {
+void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebug, bool &wantPPM) {
+    if (argc >= 2)
         file = argv[1];
-        isDebug = true;
-        return;
+
+    for (int i = 2; i < argc; ++i) {
+        if (std::string(argv[i]) == "-d") isDebug = true;
+        if (std::string(argv[i]) == "-w") wantPPM = true;
     }
 
-    if (argc == 3 && std::string(argv[2]) == "-w") {
-        wantPPM = true;
-    }
-
-    if (argc != 2 && !wantPPM) {
-        throw RayTracerException("USAGE: ./raytracer <SCENE_FILE>");
-    } else if (argc == 3 && std::string(argv[2]) == "-d") {
-        
-    }
-
-    file = argv[1];
-    if (!is_valid_cfg(file)) {
+    if (!is_valid_cfg(file))
         throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
+}
+
+void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg) {
+    for (const auto &s : cfg.spheres) {
+        auto obj = loadPrimitive("libsphere.so");
+        obj->setPosition(s.center);
+        obj->setRadius(s.radius);
+        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(s.color));
+        scene.addObject(std::move(obj));
     }
+    for (const auto &c : cfg.cylinders) {
+        auto obj = loadPrimitive("libcylinder.so");
+        obj->setPosition(c.base);
+        obj->setRadius(c.radius);
+        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(c.color));
+        scene.addObject(std::move(obj));
+    }
+    for (const auto &cone : cfg.cones) {
+        auto obj = loadPrimitive("libcone.so");
+        obj->setConeAxis(Math::Vector3D(0, 1, 0));
+        obj->setPosition(cone.apex);
+        obj->setRadius(cone.radius);
+        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(cone.color));
+        scene.addObject(std::move(obj));
+    }
+    for (const auto &p : cfg.planes) {
+        auto obj = loadPrimitive("libplane.so");
+        obj->setAxis(p.axis);
+        Math::Point3D pos;
+        if (p.axis == 'X') pos.x = p.position;
+        else if (p.axis == 'Y') pos.y = p.position;
+        else pos.z = p.position;
+        obj->setPosition(pos);
+        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(p.color));
+        scene.addObject(std::move(obj));
+    }
+}
+
+void Main::calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM)
+{
+    RayTracer::Scene scene;
+
+    // CAMERA
+    float aspect = static_cast<float>(cfg.camera.width) / cfg.camera.height;
+    float scale  = std::tan((cfg.camera.fieldOfView * 0.5f) * M_PI / 180.0f);
+    Math::Vector3D bs{-2.0f * scale * aspect, 0.0f, 0.0f};
+    Math::Vector3D ls{0.0f, -2.0f * scale, 0.0f};
+    Math::Point3D origin{
+        cfg.camera.position.x - bs.x * 0.5f,
+        cfg.camera.position.y - ls.y * 0.5f,
+        cfg.camera.position.z - 1.0f
+    };
+
+    scene.setCamera(RayTracer::Camera(cfg.camera.position, RayTracer::Rectangle3D(origin, bs, ls)));
+
+    // LIGHTS
+    scene.setAmbientLight(std::make_unique<RayTracer::AmbientLight>(static_cast<float>(cfg.ambient)));
+    for (const auto &d : cfg.directionals)
+        scene.addLight(std::make_unique<RayTracer::DirectionalLight>(d.direction, static_cast<float>(cfg.diffuse)));
+    for (const auto &p : cfg.points)
+        scene.addLight(std::make_unique<RayTracer::PointLight>(p.position, static_cast<float>(cfg.diffuse)));
+
+    // OBJECTS (chargés dynamiquement)
+    this->addObjectsToScene(scene, cfg);  // tu as déjà cette méthode, on la réutilise
+
+    int w = cfg.camera.width;
+    int h = cfg.camera.height;
+    if (wantPPM)
+        std::cout << "P3\n" << w << " " << h << "\n255\n";
+
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            double u = (x + 0.5) / w;
+            double v = (y + 0.5) / h;
+            RayTracer::Ray ray = scene.getCamera().ray(u, v);
+
+            Color finalColor(0, 0, 0);
+            double closest_t = std::numeric_limits<double>::max();
+            std::shared_ptr<RayTracer::IPrimitive> closestObject = nullptr;
+            Math::Point3D hitPoint;
+            Math::Vector3D normal;
+
+            for (const auto &obj : scene.getObjects()) {
+                double t;
+                Math::Point3D pt;
+                Math::Vector3D n;
+                if (obj->intersect(ray, t, pt, n) && t < closest_t) {
+                    closest_t = t;
+                    closestObject = obj;
+                    hitPoint = pt;
+                    normal = n;
+                }
+            }
+
+            if (closestObject) {
+                if (scene.getAmbient())
+                    finalColor = scene.getAmbient()->illuminate(ray, *closestObject, hitPoint);
+
+                for (const auto &light : scene.getLights()) {
+                    Math::Vector3D lightDir;
+                    double dist = 0;
+                    if (auto *dir = dynamic_cast<RayTracer::DirectionalLight *>(light.get())) {
+                        lightDir = dir->getDirection() * -1.0;
+                    } else if (auto *pt = dynamic_cast<RayTracer::PointLight *>(light.get())) {
+                        lightDir = pt->getPosition() - hitPoint;
+                        dist = lightDir.length();
+                        lightDir = lightDir / dist;
+                    }
+
+                    const double bias = 1e-4;
+                    Math::Point3D shadowOrig = hitPoint + normal * bias;
+                    RayTracer::Ray shadowRay(shadowOrig, lightDir);
+                    bool inShadow = false;
+
+                    for (const auto &obj : scene.getObjects()) {
+                        if (obj != closestObject) {
+                            double tTmp;
+                            Math::Point3D tmpPt;
+                            Math::Vector3D tmpN;
+                            if (obj->intersect(shadowRay, tTmp, tmpPt, tmpN) &&
+                                (dist == 0 || tTmp < dist)) {
+                                inShadow = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!inShadow) {
+                        double diff = std::max(0.0, normal.dot(lightDir));
+                        Color c = light->illuminate(ray, *closestObject, hitPoint);
+                        finalColor.r = std::min(finalColor.r + static_cast<int>(c.r * diff), 255);
+                        finalColor.g = std::min(finalColor.g + static_cast<int>(c.g * diff), 255);
+                        finalColor.b = std::min(finalColor.b + static_cast<int>(c.b * diff), 255);
+                    }
+                }
+            }
+
+            if (wantPPM)
+                std::cout << finalColor.toPPM() << "\n";
+            else
+                display.pushPixel(x, y, Display::Pixel(finalColor.r, finalColor.g, finalColor.b));
+        }
+    }
+    if (!wantPPM)
+        display.notifyDone();
 }
 
 void Main::debug_config(const Config::Scene &cfg)
@@ -98,6 +234,14 @@ void Main::debug_config(const Config::Scene &cfg)
                   << "  couleur = (" << c.color.r << ", " << c.color.g << ", " << c.color.b << ")\n";
     }
 
+    std::cout << "TRIANGLES:\n";
+    /*for (const auto &t : cfg.triangles) {
+        std::cout << "a = (" << t.a.x << ", " << t.a.y << ", " << t.a.z << ")"
+                  << "  b = (" << t.b.x << ", " << t.b.y << ", " << t.b.z << ")"
+                  << "  c = (" << t.c.x << ", " << t.c.y << ", " << t.c.z << ")"
+                  << "  couleur = (" << t.color.r << ", " << t.color.g << ", " << t.color.b << ")\n";
+    }*/
+
     std::cout << "PLANES:\n";
     for (const auto &p : cfg.planes) {
         std::cout << "axe = '" << p.axis << "'"
@@ -109,231 +253,18 @@ void Main::debug_config(const Config::Scene &cfg)
     std::cout << "ambient = " << cfg.ambient << "  diffuse = " << cfg.diffuse << "\n";
 }
 
-void Main::calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM)
-{
-    RayTracer::Scene scene;
-
-    float aspect = static_cast<float>(cfg.camera.width) / cfg.camera.height;
-    float scale  = std::tan((cfg.camera.fieldOfView * 0.5f) * M_PI / 180.0f);
-    Math::Vector3D bs{-2.0f * scale * aspect, 0.0f, 0.0f};
-    Math::Vector3D ls{0.0f, -2.0f * scale, 0.0f};
-    Math::Point3D origin{
-        cfg.camera.position.x - bs.x * 0.5f,
-        cfg.camera.position.y - ls.y * 0.5f,
-        cfg.camera.position.z - 1.0f
-    };
-
-    scene.setCamera(
-        RayTracer::Camera(
-            cfg.camera.position,
-            RayTracer::Rectangle3D(origin, bs, ls)
-        )
-    );
-
-    scene.setAmbientLight(
-        std::make_unique<RayTracer::AmbientLight>(
-            static_cast<float>(cfg.ambient)
-        )
-    );
-
-    // Add lights
-    for (const auto &d : cfg.directionals) {
-        scene.addLight(
-            std::make_unique<RayTracer::DirectionalLight>(
-                d.direction,
-                static_cast<float>(cfg.diffuse)
-            )
-        );
-    }
-
-    // Add point lights
-    for (const auto &p : cfg.points) {
-        scene.addLight(
-            std::make_unique<RayTracer::PointLight>(
-                p.position,
-                static_cast<float>(cfg.diffuse)
-            )
-        );
-    }
-
-    // Add spheres
-    for (const auto &s : cfg.spheres) {
-        scene.addObject(
-            std::make_shared<RayTracer::Sphere>(
-                s.center,
-                s.radius,
-                std::make_shared<RayTracer::FlatColor>(s.color)
-            )
-        );
-    }
-
-    // Add cylinders
-    for (const auto &c : cfg.cylinders) {
-        scene.addObject(
-            std::make_shared<RayTracer::Cylinder>(
-                c.base,
-                c.radius,
-                c.height,
-                std::make_shared<RayTracer::FlatColor>(c.color)
-            )
-        );
-    }
-
-    // Add cones
-    for (const auto &c : cfg.cones) {
-        scene.addObject(
-            std::make_shared<RayTracer::Cone>(
-                c.apex,
-                c.height,
-                c.radius,
-                std::make_shared<RayTracer::FlatColor>(c.color)
-            )
-        );
-    }
-
-    for (const auto &p : cfg.planes) {
-        Math::Vector3D normal{0.0f, 0.0f, 0.0f};
-        if (p.axis == 'X') normal.x = 1.0f;
-        else if (p.axis == 'Y') normal.y = 1.0f;
-        else normal.z = 1.0f;
-
-        Math::Point3D pt{0.0f, 0.0f, 0.0f};
-        if (p.axis == 'X') pt.x = p.position;
-        else if (p.axis == 'Y') pt.y = p.position;
-        else pt.z = p.position;
-
-        scene.addObject(
-            std::make_shared<RayTracer::Plane>(
-                pt,
-                normal,
-                std::make_shared<RayTracer::FlatColor>(p.color)
-            )
-        );
-    }
-
-    int w = cfg.camera.width;
-    int h = cfg.camera.height;
-    if (wantPPM) {
-        std::cout << "P3\n" << w << " " << h << "\n255\n";
-    }
-
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            double u = (x + 0.5) / w;
-            double v = (y + 0.5) / h;
-            RayTracer::Ray ray = scene.getCamera().ray(u, v);
-
-            Color finalColor(0, 0, 0);
-            double closest_t = std::numeric_limits<double>::max();
-            std::shared_ptr<RayTracer::IPrimitive> closestObject = nullptr;
-            Math::Point3D hitPoint;
-            Math::Vector3D normal;
-
-            for (const auto &obj : scene.getObjects()) {
-                double t;
-                Math::Point3D pt;
-                Math::Vector3D n;
-                if (obj->intersect(ray, t, pt, n) && t < closest_t) {
-                    closest_t = t;
-                    closestObject = obj;
-                    hitPoint = pt;
-                    normal = n;
-                }
-            }
-
-            if (closestObject) {
-                // Start with ambient
-                if (scene.getAmbient()) {
-                    finalColor = scene.getAmbient()->illuminate(ray, *closestObject, hitPoint);
-                }
-                // Lighting
-                for (const auto &light : scene.getLights()) {
-                    if (auto *dirLight = dynamic_cast<RayTracer::DirectionalLight *>(light.get())) {
-                        Math::Vector3D lightDir = dirLight->getDirection() * -1.0;
-                        lightDir = lightDir / lightDir.length();
-
-                        // Shadow ray
-                        const double bias = 1e-4;
-                        Math::Point3D shadowOrigin = hitPoint + normal * bias;
-                        RayTracer::Ray shadowRay(shadowOrigin, lightDir);
-                        bool shadowed = false;
-
-                        for (const auto &obj : scene.getObjects()) {
-                            if (obj != closestObject) {
-                                double tTmp;
-                                Math::Point3D tmpPt;
-                                Math::Vector3D tmpN;
-                                if (obj->intersect(shadowRay, tTmp, tmpPt, tmpN)) {
-                                    shadowed = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!shadowed) {
-                            double diff = std::max(0.0, normal.dot(lightDir));
-                            Color lightColor = light->illuminate(ray, *closestObject, hitPoint);
-                            finalColor.r = std::min(finalColor.r + static_cast<int>(lightColor.r * diff), 255);
-                            finalColor.g = std::min(finalColor.g + static_cast<int>(lightColor.g * diff), 255);
-                            finalColor.b = std::min(finalColor.b + static_cast<int>(lightColor.b * diff), 255);
-                        }
-
-                    } else if (auto *pLight = dynamic_cast<RayTracer::PointLight *>(light.get())) {
-                        Math::Vector3D lightDir = pLight->getPosition() - hitPoint;
-                        double dist = lightDir.length();
-                        lightDir = lightDir / dist;
-
-                        const double bias = 1e-4;
-                        Math::Point3D shadowOrig = hitPoint + normal * bias;
-                        RayTracer::Ray shadowRay(shadowOrig, lightDir);
-                        bool inShadow = false;
-                        for (const auto &obj : scene.getObjects()) {
-                            if (obj != closestObject) {
-                                double tTmp;
-                                Math::Point3D tmpPt;
-                                Math::Vector3D tmpN;
-                                if (obj->intersect(shadowRay, tTmp, tmpPt, tmpN) && tTmp < dist) {
-                                    inShadow = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!inShadow) {
-                            double diff = std::max(0.0, normal.dot(lightDir));
-                            Color c = light->illuminate(ray, *closestObject, hitPoint);
-                            finalColor.r = std::min(finalColor.r + static_cast<int>(c.r * diff), 255);
-                            finalColor.g = std::min(finalColor.g + static_cast<int>(c.g * diff), 255);
-                            finalColor.b = std::min(finalColor.b + static_cast<int>(c.b * diff), 255);
-                        }
-                    }
-                }
-            }
-
-            if (wantPPM) {
-                std::cout << finalColor.toPPM() << "\n";
-            } else {
-                display.pushPixel(x, y, Display::Pixel(finalColor.r, finalColor.g, finalColor.b));
-            }
-        }
-    }
-    if (!wantPPM)
-        display.notifyDone();
-}
-
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     try {
         Main main;
         std::string file;
-        bool isDebug, wantPPM = false;
+        bool isDebug = false, wantPPM = false;
         main.parseArguments(argc, argv, file, isDebug, wantPPM);
 
         auto cfg = Config::parseScene(file);
-
         if (isDebug) {
             main.debug_config(cfg);
             return 0;
         }
-
         if (wantPPM) {
             Display display(cfg.camera.width, cfg.camera.height);
             main.calculPPM(cfg, display, wantPPM);
@@ -345,11 +276,9 @@ int main(int argc, char **argv)
             if (worker.joinable())
                 worker.join();
         }
-
     } catch (const RayTracerException &e) {
         std::cerr << e.what() << std::endl;
         return 84;
     }
-
     return 0;
 }

@@ -26,7 +26,7 @@ namespace RayTracer {
         void setPosition(const Math::Point3D &pos) override;
         void setRadius(double radius) override;
         void setMaterial(std::shared_ptr<IMaterial> material) override;
-
+        void setConeAxis(const Math::Vector3D &axis) override;
 
     private:
         Math::Point3D _apex;

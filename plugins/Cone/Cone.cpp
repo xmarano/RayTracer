@@ -93,6 +93,11 @@ void RayTracer::Cone::setMaterial(std::shared_ptr<IMaterial> material) {
     _material = std::move(material);
 }
 
+void RayTracer::Cone::setConeAxis(const Math::Vector3D &axis) {
+    double len = axis.length();
+    _axis = (len != 0) ? axis / len : axis;
+}
+
 extern "C" std::unique_ptr<RayTracer::IPrimitive> create() {
     return std::make_unique<RayTracer::Cone>();
 }
