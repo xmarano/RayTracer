@@ -4,7 +4,6 @@
 ** File description:
 ** Main.cpp
 */
-
 #include <thread>
 #include <cmath>
 #include <dlfcn.h>
@@ -24,7 +23,8 @@
 
 using RayTracer::IPrimitive;
 
-std::unique_ptr<IPrimitive> loadPrimitive(const std::string &soName) {
+std::unique_ptr<IPrimitive> loadPrimitive(const std::string &soName)
+{
     void *handle = dlopen(("./plugins/" + soName).c_str(), RTLD_LAZY);
     if (!handle)
         throw RayTracerException("Cannot open plugin: " + std::string(dlerror()));
@@ -37,13 +37,15 @@ std::unique_ptr<IPrimitive> loadPrimitive(const std::string &soName) {
     return create();
 }
 
-void Main::printHelp() {
+void Main::printHelp()
+{
     std::cout << "USAGE: ./raytracer <SCENE_FILE> [-d] [-w]\n";
     std::cout << "  -d : debug mode (print config)\n";
     std::cout << "  -w : write PPM to stdout (no window)\n";
 }
 
-void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebug, bool &wantPPM) {
+void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebug, bool &wantPPM)
+{
     if (argc >= 2)
         file = argv[1];
 
@@ -56,7 +58,8 @@ void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebu
         throw RayTracerException("Error: SCENE_FILE must have .cfg extension");
 }
 
-void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg) {
+void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg)
+{
     for (const auto &s : cfg.spheres) {
         auto obj = loadPrimitive("libsphere.so");
         obj->setPosition(s.center);
@@ -116,8 +119,8 @@ void Main::calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM)
     for (const auto &p : cfg.points)
         scene.addLight(std::make_unique<RayTracer::PointLight>(p.position, static_cast<float>(cfg.diffuse)));
 
-    // OBJECTS (chargés dynamiquement)
-    this->addObjectsToScene(scene, cfg);  // tu as déjà cette méthode, on la réutilise
+    // OBJECTS (load dynamiquement)
+    this->addObjectsToScene(scene, cfg);
 
     int w = cfg.camera.width;
     int h = cfg.camera.height;

@@ -1,3 +1,9 @@
+##
+## EPITECH PROJECT, 2025
+## B-OOP-400-MAR-4-1-raytracer-selim.bouasker
+## File description:
+## Makefile
+##
 NAME        = raytracer
 
 FLAGS       = -std=c++17 -Wall -Wextra -Iinclude
@@ -30,6 +36,7 @@ TEST_SRC    = criterion.cpp
 TEST_NAME   = unitests
 
 OS          := $(shell uname -s)
+
 ifeq ($(OS), Darwin)
     T1      = -I /opt/homebrew/opt/criterion/include
     T2      = -L /opt/homebrew/opt/criterion/lib

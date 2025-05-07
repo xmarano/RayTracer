@@ -11,7 +11,7 @@
 <body>
     <div id="left">
         <h1>Configuration</h1>
-        <form name="configuration" method="post" action="/set_configuration">
+        <form id="configuration" name="configuration" method="post" action="/set_configuration">
 
             <!-- Camera -->
             <div class="camera">
@@ -59,6 +59,7 @@
                 <input type="number" name="sphere1_z" placeholder="1" step="0.1" />
                 <label>Radius:</label>
                 <input type="number" name="sphere1_radius" placeholder="1" min="0" step="0.1"/>
+                </br>
                 <label>r:</label>
                 <input type="number" name="sphere1_color_r" min="0" max="255" placeholder="200" />
                 <label>g:</label>
@@ -75,6 +76,7 @@
                 <input type="number" name="sphere2_z" placeholder="0" step="0.1" />
                 <label>Radius:</label>
                 <input type="number" name="sphere2_radius" placeholder="1.5" min="0" step="0.1" />
+                </br>
                 <label>r:</label>
                 <input type="number" name="sphere2_color_r" min="0" max="255" placeholder="0" />
                 <label>g:</label>
@@ -91,6 +93,7 @@
                 </select>
                 <label>Position:</label>
                 <input type="number" name="plane1_position" placeholder="-1" />
+                <br/>
                 <label>r:</label>
                 <input type="number" name="plane1_color_r" min="0" max="255" placeholder="230" />
                 <label>g:</label>
@@ -107,6 +110,7 @@
                 </select>
                 <label>Position:</label>
                 <input type="number" name="plane2_position" placeholder="-10" />
+                <br/>
                 <label>r:</label>
                 <input type="number" name="plane2_color_r" min="0" max="255" placeholder="150" />
                 <label>g:</label>
@@ -135,6 +139,7 @@
                 <input type="number" name="light_point_z" placeholder="0" step="0.1" />
                 <label>intensity:</label>
                 <input type="number" name="light_point_intensity" placeholder="0.5" min="0" step="0.1" />
+                <br/>
                 <label>r:</label>
                 <input type="number" name="light_point_color_r" min="0" max="255" placeholder="255" />
                 <label>g:</label>
@@ -150,15 +155,15 @@
                 <label>z:</label>
                 <input type="number" name="light_directional_z" placeholder="-0.5" step="0.1" />
             </div>
-
-            <button type="submit">Submit</button>
         </form>
     </div>
 
     <div id="right">
         <h1>Render</h1>
         <img src="{{ img_src }}?v={{ version }}" alt="Render Image"/>
+        <button type="submit" form="configuration">Submit</button>
     </div>
 </body>
 
 </html>
+

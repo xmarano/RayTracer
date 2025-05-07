@@ -122,6 +122,38 @@ Config::Scene Config::parseScene(const std::string &file)
             scene.cones.push_back(c);
         }
 
+        // Triangles
+        const libconfig::Setting &triangles = cfg.lookup("primitives.triangles");
+        for (int i = 0; i < triangles.getLength(); ++i) {
+            const libconfig::Setting &config_triangle = triangles[i];
+            Config::Triangle t;
+
+            // vertex a
+            const libconfig::Setting &a = config_triangle.lookup("a");
+            t.a.x = a.lookup("x");
+            t.a.y = a.lookup("y");
+            t.a.z = a.lookup("z");
+            // vertex b
+            const libconfig::Setting &b = config_triangle.lookup("b");
+            t.b.x = b.lookup("x");
+            t.b.y = b.lookup("y");
+            t.b.z = b.lookup("z");
+            // vertex c
+            const libconfig::Setting &c = config_triangle.lookup("c");
+            t.c.x = c.lookup("x");
+            t.c.y = c.lookup("y");
+            t.c.z = c.lookup("z");
+            // color
+            const libconfig::Setting &config_color = config_triangle.lookup("color");
+            t.color = Color(
+                config_color.lookup("r"),
+                config_color.lookup("g"),
+                config_color.lookup("b")
+            );
+
+            scene.triangles.push_back(t);
+        }
+
         // Planes
         const libconfig::Setting &planes = cfg.lookup("primitives.planes");
         for (int i = 0; i < planes.getLength(); ++i) {
