@@ -15,18 +15,19 @@ namespace RayTracer {
     class Cone : public IPrimitive {
     public:
         Cone();
-        Cone(const Math::Point3D &apex, double height, double radius, std::shared_ptr<IMaterial> material);
         ~Cone() override = default;
 
         bool intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const override;
         void translate(const Math::Vector3D &v) override;
         void rotate(const Math::Vector3D &axis, double angleDegrees) override;
         std::shared_ptr<IMaterial> getMaterial() const override;
+        void setHeight(double height) override;
+        void setCoAxis(const Math::Vector3D &axis) override;
+
 
         void setPosition(const Math::Point3D &pos) override;
         void setRadius(double radius) override;
         void setMaterial(std::shared_ptr<IMaterial> material) override;
-        void setConeAxis(const Math::Vector3D &axis) override;
 
     private:
         Math::Point3D _apex;

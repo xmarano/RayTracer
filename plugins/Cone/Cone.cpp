@@ -17,10 +17,6 @@ RayTracer::Cone::Cone()
       _material(nullptr)
 {}
 
-RayTracer::Cone::Cone(const Math::Point3D &apex, double height, double radius, std::shared_ptr<RayTracer::IMaterial> material)
-    : _apex(apex), _height(height), _radius(radius), _material(std::move(material))
-{}
-
 void RayTracer::Cone::translate(const Math::Vector3D &v) {
     _apex = _apex + v;
 }
@@ -93,10 +89,15 @@ void RayTracer::Cone::setMaterial(std::shared_ptr<IMaterial> material) {
     _material = std::move(material);
 }
 
-void RayTracer::Cone::setConeAxis(const Math::Vector3D &axis) {
-    double len = axis.length();
-    _axis = (len != 0) ? axis / len : axis;
+void RayTracer::Cone::setCoAxis(const Math::Vector3D &axis) {
+    _axis = axis;
 }
+
+void RayTracer::Cone::setHeight(double height) {
+    _height = height;
+}
+
+
 
 extern "C" std::unique_ptr<RayTracer::IPrimitive> create() {
     return std::make_unique<RayTracer::Cone>();

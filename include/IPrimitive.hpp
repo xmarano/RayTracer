@@ -25,7 +25,8 @@ namespace RayTracer {
             virtual void setRadius(double radius) = 0;
             virtual void setMaterial(std::shared_ptr<IMaterial> material) = 0;
             virtual void setAxis(char axis) { (void)axis; }
-            virtual void setConeAxis(const Math::Vector3D &axis) { (void) axis; }
+            virtual void setHeight(double height) { (void)height; }
+            virtual void setCoAxis(const Math::Vector3D &axis) { (void)axis; }
             std::unique_ptr<IPrimitive> loadPrimitive(const std::string &soName);
 
             Color getBaseColor() const {

@@ -73,9 +73,9 @@ void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg) 
     }
     for (const auto &cone : cfg.cones) {
         auto obj = loadPrimitive("libcone.so");
-        obj->setConeAxis(Math::Vector3D(0, 1, 0));
         obj->setPosition(cone.apex);
         obj->setRadius(cone.radius);
+        obj->setHeight(cone.height);
         obj->setMaterial(std::make_shared<RayTracer::FlatColor>(cone.color));
         scene.addObject(std::move(obj));
     }

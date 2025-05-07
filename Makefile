@@ -15,7 +15,8 @@ SRC         = src/main.cpp \
               src/Utils.cpp \
               src/Math3D.cpp \
               src/AmbientLight.cpp \
-              src/PointLight.cpp
+              src/PointLight.cpp    \
+
 
 OBJ         = $(SRC:.cpp=.o)
 
