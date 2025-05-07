@@ -57,7 +57,7 @@
                 <input type="number" name="sphere1_y" placeholder="3.5" step="0.1" />
                 <label>z:</label>
                 <input type="number" name="sphere1_z" placeholder="1" step="0.1" />
-                <label>Radius:</label>
+                <br><label>Radius:</label></br>
                 <input type="number" name="sphere1_radius" placeholder="1" min="0" step="0.1"/>
                 <label>r:</label>
                 <input type="number" name="sphere1_color_r" min="0" max="255" placeholder="200" />
@@ -73,7 +73,7 @@
                 <input type="number" name="sphere2_y" placeholder="1" step="0.1" />
                 <label>z:</label>
                 <input type="number" name="sphere2_z" placeholder="0" step="0.1" />
-                <label>Radius:</label>
+                <br><label>Radius:</label></br>
                 <input type="number" name="sphere2_radius" placeholder="1.5" min="0" step="0.1" />
                 <label>r:</label>
                 <input type="number" name="sphere2_color_r" min="0" max="255" placeholder="0" />
@@ -133,7 +133,7 @@
                 <input type="number" name="light_point_y" placeholder="5" step="0.1" />
                 <label>z:</label>
                 <input type="number" name="light_point_z" placeholder="0" step="0.1" />
-                <label>intensity:</label>
+                <br><label>intensity:</label></br>
                 <input type="number" name="light_point_intensity" placeholder="0.5" min="0" step="0.1" />
                 <label>r:</label>
                 <input type="number" name="light_point_color_r" min="0" max="255" placeholder="255" />
@@ -150,15 +150,15 @@
                 <label>z:</label>
                 <input type="number" name="light_directional_z" placeholder="-0.5" step="0.1" />
             </div>
-
-            <button type="submit">Submit</button>
         </form>
     </div>
 
     <div id="right">
         <h1>Render</h1>
         <img src="{{ img_src }}?v={{ version }}" alt="Render Image"/>
+        <button type="submit" form="configuration">Submit</button>
     </div>
 </body>
 
 </html>
+

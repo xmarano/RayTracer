@@ -1,12 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 :root {
-  --clr-bg:       #f4f4f4;
-  --clr-white:    #ffffff;
+  --clr-bg-start: #00e58c;
+  --clr-bg-mid:   #c8f8e1;
+  --clr-white:    rgba(255,255,255,0.8);
   --clr-black:    #000000;
   --clr-gray:     #e5e5e5;
   --clr-text:     #111111;
-  --clr-accent:   #00e58c;
+  --clr-accent:   #00c878;
   --font-base:    'Inter', sans-serif;
 }
 
@@ -19,10 +20,23 @@
 body {
   display: flex;
   height: 100vh;
-  background: var(--clr-bg);
   font-family: var(--font-base);
   color: var(--clr-text);
   overflow: hidden;
+  background: linear-gradient(
+    45deg,
+    var(--clr-bg-start) 0%,
+    var(--clr-bg-start) 50%,
+    var(--clr-bg-mid)   100%
+  );
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+}
+
+@keyframes gradientBG {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 #left, #right {
@@ -32,17 +46,20 @@ body {
 
 #left {
   background: var(--clr-white);
-  padding: 2.5rem;
+  backdrop-filter: blur(8px);
+  padding: 10vh 1rem 1rem;
   border-right: 1px solid var(--clr-gray);
 }
 
 #right {
-  background: var(--clr-bg);
+  position: relative;
+  background: var(--clr-white);
+  backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 2.5rem;
+  justify-content: center;
+  padding: 1rem;
 }
 
 h1, h2 {
@@ -52,83 +69,68 @@ h1, h2 {
 }
 
 h1 {
-  font-size: 1.75rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
 }
+
 h1::after {
   content: '';
   position: absolute;
-  left: 0; bottom: -0.4rem;
-  width: 3rem; height: 4px;
+  left: 0;
+  bottom: -0.3rem;
+  width: 2rem;
+  height: 3px;
   background: var(--clr-accent);
 }
 
 h2 {
-  font-size: 1.25rem;
-  margin: 2rem 0 1rem;
+  font-size: 1rem;
+  margin: 1.25rem 0 0.5rem;
 }
+
 h2::after {
   content: '';
   position: absolute;
-  left: 0; bottom: -0.3rem;
-  width: 2.5rem; height: 3px;
+  left: 0;
+  bottom: -0.25rem;
+  width: 1.5rem;
+  height: 2px;
   background: var(--clr-accent);
 }
 
 h4 {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  margin: 1.5rem 0 0.5rem;
+  margin: 1rem 0 0.25rem;
 }
 
 .camera, .primitives, .lights {
   position: relative;
   background: var(--clr-white);
-  border-radius: 32px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  border-radius: 16px;
+  padding: 1rem;
+  margin-bottom: 0;
   box-shadow:
-    inset 0 4px 8px rgba(0,0,0,0.03),
-    0 8px 16px rgba(0,0,0,0.06),
-    0 16px 32px rgba(0,0,0,0.04);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  z-index: 0;
-}
-
-.camera::before,
-.primitives::before,
-.lights::before {
-  content: '';
-  position: absolute;
-  top: -4px; left: -4px;
-  width: calc(100% + 8px);
-  height: calc(100% + 8px);
-  border-radius: 36px;
-  background: linear-gradient(
-    135deg,
-    rgba(0,229,140,0.4) 0%,
-    rgba(0,229,140,0) 60%
-  );
-  filter: blur(20px);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
-
-.camera:hover::before,
-.primitives:hover::before,
-.lights:hover::before {
-  opacity: 1;
+    inset 0 2px 4px rgba(0,0,0,0.02),
+    0 4px 8px rgba(0,0,0,0.04),
+    0 8px 16px rgba(0,0,0,0.03);
+  transition: transform 0.2s ease,
+              box-shadow 0.2s ease,
+              border 0.2s ease;
+  border: 2px solid transparent;
 }
 
 .camera:hover,
 .primitives:hover,
 .lights:hover {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-2px);
   box-shadow:
-    inset 0 4px 12px rgba(0,0,0,0.04),
-    0 12px 24px rgba(0,0,0,0.08),
-    0 24px 48px rgba(0,0,0,0.06);
+    inset 0 2px 6px rgba(0,0,0,0.03),
+    0 6px 12px rgba(0,0,0,0.05),
+    0 12px 24px rgba(0,0,0,0.04);
+  border: 2px solid var(--clr-accent);
 }
 
 label,
@@ -136,22 +138,24 @@ input[type="number"],
 select {
   display: inline-block;
   vertical-align: middle;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 label {
   white-space: nowrap;
-  margin-right: 0.5rem;
+  margin-right: 0.25rem;
 }
+
 input[type="number"],
 select {
-  margin-right: 1.5rem;
+  margin-right: 0.75rem;
   appearance: none;
+  background-color: rgb(243, 253, 243);
   border: 1px solid var(--clr-gray);
   border-radius: 999px;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  min-width: 5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  width: 5rem;
   transition: border-color 0.2s ease;
 }
 
@@ -161,30 +165,34 @@ select:focus {
   border-color: var(--clr-accent);
 }
 
-.camera h4,
-.primitives h4,
-.lights h4 {
-  margin: 2rem 0 0.75rem;
+form {
+  display: flex;
+  flex-direction: column;
 }
 
 button[type="submit"] {
+  align-self: center;
   position: relative;
-  display: inline-block;
-  margin: 2rem 0;
-  padding: 0.75rem 2rem;
+  margin-top: 2rem;
+  padding: 1rem 2.5rem;
+  font-size: 1rem;
   background: var(--clr-white);
   color: var(--clr-black);
   font-weight: 600;
   border: 1px solid var(--clr-black);
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease,
+              box-shadow 0.2s ease;
 }
 
 button[type="submit"]::after {
   content: '';
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: var(--clr-accent);
   border-radius: 999px;
   z-index: -1;
@@ -194,29 +202,20 @@ button[type="submit"]::after {
 
 button[type="submit"]:hover {
   transform: translate(-2px, -2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
+
 button[type="submit"]:hover::after {
   transform: translate(4px, 4px);
-}
-#right h1 {
-  align-self: flex-start;
-  font-size: 1.75rem;
-  font-weight: 700;
-  position: relative;
-  margin-bottom: 1rem;
-}
-#right h1::after {
-  content: '';
-  position: absolute; left: 0; bottom: -0.4rem;
-  width: 3rem; height: 4px;
-  background: var(--clr-accent);
 }
 
 #right img,
 #right canvas {
   width: 100%;
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  max-width: 1000px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 3rem;
 }
 
 @media (max-width: 768px) {
