@@ -4,13 +4,18 @@
 ** File description:
 ** main.hpp
 */
+#pragma once
+
 #include "ConfigParser.hpp"
 #include "IPrimitive.hpp"
 #include "Display.hpp"
 #include "Scene.hpp"
+#include "Color.hpp"
+#include "PluginLoader.hpp"
 #include <thread>
-
-#pragma once
+#include <memory>
+#include <vector>
+#include <string>
 
 class Main {
     public:
@@ -20,3 +25,19 @@ class Main {
         void calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM);
         void addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg);
 };
+
+template <typename ConfigType, typename SetterFunc>
+void addPrimitiveFromConfig(
+    RayTracer::Scene &scene,
+    const std::vector<ConfigType> &configs,
+    const std::string &pluginName,
+    SetterFunc setter)
+{
+    for (const auto &cfg : configs) {
+        auto obj = loadPrimitive(pluginName);
+        setter(obj, cfg);
+        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(cfg.color));
+        scene.addObject(std::move(obj));
+    }
+}
+

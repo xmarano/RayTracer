@@ -21,22 +21,6 @@
 #include "../include/PointLight.hpp"
 #include "../include/Color.hpp"
 
-using RayTracer::IPrimitive;
-
-std::unique_ptr<IPrimitive> loadPrimitive(const std::string &soName)
-{
-    void *handle = dlopen(("./plugins/" + soName).c_str(), RTLD_LAZY);
-    if (!handle)
-        throw RayTracerException("Cannot open plugin: " + std::string(dlerror()));
-
-    using CreateFunc = std::unique_ptr<IPrimitive>(*)();
-    CreateFunc create = reinterpret_cast<CreateFunc>(dlsym(handle, "create"));
-    if (!create)
-        throw RayTracerException("Cannot find create function: " + std::string(dlerror()));
-
-    return create();
-}
-
 void Main::printHelp()
 {
     std::cout << "USAGE: ./raytracer <SCENE_FILE> [-d] [-w]\n";
@@ -76,40 +60,37 @@ void Main::parseArguments(int argc, char **argv, std::string &file, bool &isDebu
 
 void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg)
 {
-    for (const auto &s : cfg.spheres) {
-        auto obj = loadPrimitive("libsphere.so");
-        obj->setPosition(s.center);
-        obj->setRadius(s.radius);
-        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(s.color));
-        scene.addObject(std::move(obj));
-    }
-    for (const auto &c : cfg.cylinders) {
-        auto obj = loadPrimitive("libcylinder.so");
-        obj->setPosition(c.base);
-        obj->setRadius(c.radius);
-        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(c.color));
-        scene.addObject(std::move(obj));
-    }
-    for (const auto &cone : cfg.cones) {
-        auto obj = loadPrimitive("libcone.so");
-        obj->setPosition(cone.apex);
-        obj->setRadius(cone.radius);
-        obj->setHeight(cone.height);
-        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(cone.color));
-        scene.addObject(std::move(obj));
-    }
-    for (const auto &p : cfg.planes) {
-        auto obj = loadPrimitive("libplane.so");
-        obj->setAxis(p.axis);
-        Math::Point3D pos;
-        if (p.axis == 'X') pos.x = p.position;
-        else if (p.axis == 'Y') pos.y = p.position;
-        else pos.z = p.position;
-        obj->setPosition(pos);
-        obj->setMaterial(std::make_shared<RayTracer::FlatColor>(p.color));
-        scene.addObject(std::move(obj));
-    }
+    addPrimitiveFromConfig(scene, cfg.spheres, "libsphere.so",
+        [](std::unique_ptr<RayTracer::IPrimitive> &obj, const auto &s) {
+            obj->setPosition(s.center);
+            obj->setRadius(s.radius);
+        });
+
+    addPrimitiveFromConfig(scene, cfg.cylinders, "libcylinder.so",
+        [](std::unique_ptr<RayTracer::IPrimitive> &obj, const auto &c) {
+            obj->setPosition(c.base);
+            obj->setRadius(c.radius);
+            obj->setHeight(c.height);
+        });
+
+    addPrimitiveFromConfig(scene, cfg.cones, "libcone.so",
+        [](std::unique_ptr<RayTracer::IPrimitive> &obj, const auto &cone) {
+            obj->setPosition(cone.apex);
+            obj->setRadius(cone.radius);
+            obj->setHeight(cone.height);
+        });
+
+    addPrimitiveFromConfig(scene, cfg.planes, "libplane.so",
+        [](std::unique_ptr<RayTracer::IPrimitive> &obj, const auto &p) {
+            obj->setAxis(p.axis);
+            Math::Point3D pos;
+            if (p.axis == 'X') pos.x = p.position;
+            else if (p.axis == 'Y') pos.y = p.position;
+            else pos.z = p.position;
+            obj->setPosition(pos);
+        });
 }
+
 
 void Main::calculPPM(const Config::Scene &cfg, Display &display, bool wantPPM)
 {
