@@ -71,6 +71,8 @@ void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg)
             obj->setPosition(c.base);
             obj->setRadius(c.radius);
             obj->setHeight(c.height);
+            obj->setCoAxis(c.axis);
+            obj->setMaterial(std::make_shared<RayTracer::FlatColor>(c.color));
         });
 
     addPrimitiveFromConfig(scene, cfg.cones, "libcone.so",
@@ -78,6 +80,8 @@ void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg)
             obj->setPosition(cone.apex);
             obj->setRadius(cone.radius);
             obj->setHeight(cone.height);
+            obj->setCoAxis(cone.axis);
+            obj->setMaterial(std::make_shared<RayTracer::FlatColor>(cone.color));
         });
 
     addPrimitiveFromConfig(scene, cfg.planes, "libplane.so",
