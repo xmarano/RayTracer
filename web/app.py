@@ -41,11 +41,11 @@ def set_configuration():
     scb = getp("sphere_color_b", 0)
 
     # Cylinder
-    cyl_base_x = getp("cyl_base_x", -5)
-    cyl_base_y = getp("cyl_base_y", 0)
+    cyl_base_x = getp("cyl_base_x", -6)
+    cyl_base_y = getp("cyl_base_y", 2)
     cyl_base_z = getp("cyl_base_z", 0)
-    cyl_axis_x = getp("cyl_axis_x", 10)
-    cyl_axis_y = getp("cyl_axis_y", 5)
+    cyl_axis_x = getp("cyl_axis_x", 0.2)
+    cyl_axis_y = getp("cyl_axis_y", -0.3)
     cyl_axis_z = getp("cyl_axis_z", 0)
     cyl_radius = getp("cyl_radius", 1)
     cyl_height = getp("cyl_height", 2)
@@ -54,11 +54,11 @@ def set_configuration():
     cyl_b = getp("cyl_color_b", 0)
 
     # Cone
-    cone_apex_x = getp("cone_apex_x", 5)
-    cone_apex_y = getp("cone_apex_y", 0)
-    cone_apex_z = getp("cone_apex_z", 3)
-    cone_axis_x = getp("cone_axis_x", 10)
-    cone_axis_y = getp("cone_axis_y", 10)
+    cone_apex_x = getp("cone_apex_x", 2)
+    cone_apex_y = getp("cone_apex_y", 5)
+    cone_apex_z = getp("cone_apex_z", 1)
+    cone_axis_x = getp("cone_axis_x", -5)
+    cone_axis_y = getp("cone_axis_y", -6)
     cone_axis_z = getp("cone_axis_z", 0)
     cone_radius = getp("cone_radius", 1)
     cone_height = getp("cone_height", 4)
