@@ -8,12 +8,7 @@
 #include <cmath>
 #include "../../include/IMaterial.hpp"
 
-RayTracer::Cone::Cone()
-  : _apex(Math::Point3D(0, 0, 0))
-  , _height(1.0)
-  , _radius(1.0)
-  , _axis(Math::Vector3D(0, 1, 0))
-  , _material(nullptr)
+RayTracer::Cone::Cone() : _apex(Math::Point3D(0, 0, 0)), _height(1.0), _radius(1.0), _axis(Math::Vector3D(0, 1, 0)), _material(nullptr)
 {}
 
 void RayTracer::Cone::translate(const Math::Vector3D &v)

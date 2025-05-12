@@ -8,12 +8,7 @@
 #include <cmath>
 #include "../../include/IMaterial.hpp"
 
-RayTracer::Cylinder::Cylinder()
-  : _baseCenter{0,0,0},
-    _radius(1.0),
-    _height(1.0),
-    _axis{0,1,0},
-    _material(nullptr)
+RayTracer::Cylinder::Cylinder() : _baseCenter{0,0,0}, _radius(1.0), _height(1.0), _axis{0,1,0}, _material(nullptr)
 {
     _axis /= _axis.length();
 }
