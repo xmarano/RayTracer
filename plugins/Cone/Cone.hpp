@@ -4,12 +4,11 @@
 ** File description:
 ** Cone.hpp
 */
+#pragma once
 #include <memory>
 #include "../../include/IPrimitive.hpp"
 #include "../../include/Math3D.hpp"
 #include "../../include/IMaterial.hpp"
-
-#pragma once
 
 namespace RayTracer {
     class Cone : public IPrimitive {
@@ -23,7 +22,6 @@ namespace RayTracer {
             std::shared_ptr<IMaterial> getMaterial() const override;
             void setHeight(double height) override;
             void setCoAxis(const Math::Vector3D &axis) override;
-
             void setPosition(const Math::Point3D &pos) override;
             void setRadius(double radius) override;
             void setMaterial(std::shared_ptr<IMaterial> material) override;

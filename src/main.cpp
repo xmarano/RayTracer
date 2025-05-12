@@ -87,14 +87,18 @@ void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg)
         auto obj = loadPrimitive("libcylinder.so");
         obj->setPosition(c.base);
         obj->setRadius(c.radius);
+        obj->setHeight(c.height);
+        obj->setCoAxis(c.axis);
         obj->setMaterial(std::make_shared<RayTracer::FlatColor>(c.color));
         scene.addObject(std::move(obj));
-    }
+    }    
     for (const auto &cone : cfg.cones) {
         auto obj = loadPrimitive("libcone.so");
         obj->setPosition(cone.apex);
         obj->setRadius(cone.radius);
         obj->setHeight(cone.height);
+        obj->setHeight(cone.height);
+        obj->setCoAxis(cone.axis);
         obj->setMaterial(std::make_shared<RayTracer::FlatColor>(cone.color));
         scene.addObject(std::move(obj));
     }
