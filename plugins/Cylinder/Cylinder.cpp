@@ -8,12 +8,10 @@
 #include <cmath>
 #include "../../include/IMaterial.hpp"
 
-RayTracer::Cylinder::Cylinder() : _baseCenter(Math::Point3D(0, 0, 0)), _radius(1.0), _height(1.0), _axis(Math::Vector3D(0, 1, 0)), _center(Math::Point3D(0, 0, 0)), _material(nullptr)
-{}
-
-RayTracer::Cylinder::Cylinder(const Math::Point3D &baseCenter, double radius, double height, std::shared_ptr<RayTracer::IMaterial> material)
-    : _baseCenter(baseCenter), _radius(radius), _height(height), _axis(Math::Vector3D(0, 1, 0)), _center(baseCenter), _material(std::move(material))
-{}
+RayTracer::Cylinder::Cylinder() : _baseCenter{0,0,0}, _radius(1.0), _height(1.0), _axis{0,1,0}, _material(nullptr)
+{
+    _axis /= _axis.length();
+}
 
 void RayTracer::Cylinder::translate(const Math::Vector3D &v)
 {
@@ -23,6 +21,7 @@ void RayTracer::Cylinder::translate(const Math::Vector3D &v)
 void RayTracer::Cylinder::rotate(const Math::Vector3D &axis, double angleDegrees)
 {
     _axis = Math::rotateVector(_axis, axis, angleDegrees);
+    _axis /= _axis.length();
 }
 
 std::shared_ptr<RayTracer::IMaterial> RayTracer::Cylinder::getMaterial() const
@@ -30,48 +29,47 @@ std::shared_ptr<RayTracer::IMaterial> RayTracer::Cylinder::getMaterial() const
     return _material;
 }
 
-bool RayTracer::Cylinder::intersect(const Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const
+bool RayTracer::Cylinder::intersect(const RayTracer::Ray &ray, double &t, Math::Point3D &hitPoint, Math::Vector3D &normal) const
 {
-    Math::Vector3D oc = ray.origin - _center;
+    Math::Vector3D A = _axis / _axis.length();
+    Math::Vector3D OC = ray.origin - _baseCenter;
 
-    double a = ray.direction.x * ray.direction.x + ray.direction.z * ray.direction.z;
-    double b = 2.0 * (oc.x * ray.direction.x + oc.z * ray.direction.z);
-    double c = oc.x * oc.x + oc.z * oc.z - _radius * _radius;
+    double dA = ray.direction.dot(A);
+    Math::Vector3D Dp = ray.direction - A * dA;
 
-    double discriminant = b * b - 4 * a * c;
-    if (discriminant < 0)
-        return false;
+    double oA = OC.dot(A);
+    Math::Vector3D Op = OC - A * oA;
 
-    double sqrtDisc = std::sqrt(discriminant);
-    double t0 = (-b - sqrtDisc) / (2 * a);
-    double t1 = (-b + sqrtDisc) / (2 * a);
+    double a = Dp.dot(Dp);
+    double b = 2.0 * Dp.dot(Op);
+    double c = Op.dot(Op) - _radius * _radius;
+    double disc = b * b - 4 * a * c;
+    if (disc < 0.0) return false;
 
-    if (t0 > t1)
-        std::swap(t0, t1);
+    double sq  = std::sqrt(disc);
+    double t0  = (-b - sq) / (2.0 * a);
+    double t1  = (-b + sq) / (2.0 * a);
+    if (t0 > t1) std::swap(t0, t1);
 
-    double y0 = oc.y + t0 * ray.direction.y;
-    double y1 = oc.y + t1 * ray.direction.y;
+    double y0 = oA + t0 * dA;
+    double y1 = oA + t1 * dA;
 
-    if (y0 < 0 || y0 > _height) {
-        if (y1 < 0 || y1 > _height)
-            return false;
+    if (y0 < 0.0 || y0 > _height) {
+        if (y1 < 0.0 || y1 > _height) return false;
         t = t1;
     } else {
         t = t0;
     }
 
     hitPoint = ray.origin + ray.direction * t;
-
-    Math::Vector3D temp(hitPoint.x - _center.x, 0.0, hitPoint.z - _center.z);
-    double length = std::sqrt(temp.x * temp.x + temp.y * temp.y + temp.z * temp.z);
-    normal = (length != 0) ? temp / length : temp;
-
+    Math::Point3D axisHit = _baseCenter + A * (oA + t * dA);
+    Math::Vector3D N = hitPoint - axisHit;
+    normal = N / N.length();
     return true;
 }
 
 void RayTracer::Cylinder::setPosition(const Math::Point3D &pos)
 {
-    _center = pos;
     _baseCenter = pos;
 }
 
@@ -80,7 +78,18 @@ void RayTracer::Cylinder::setRadius(double r)
     _radius = r;
 }
 
-void RayTracer::Cylinder::setMaterial(std::shared_ptr<IMaterial> material)
+void RayTracer::Cylinder::setHeight(double height)
+{
+    _height = height;
+}
+
+void RayTracer::Cylinder::setCoAxis(const Math::Vector3D &axis)
+{
+    double len = axis.length();
+    _axis = (len > 0.0) ? axis / len : Math::Vector3D{0,1,0};
+}
+
+void RayTracer::Cylinder::setMaterial(std::shared_ptr<RayTracer::IMaterial> material)
 {
     _material = std::move(material);
 }

@@ -24,6 +24,8 @@ namespace RayTracer {
             std::shared_ptr<IMaterial> getMaterial() const override;
 
             void setPosition(const Math::Point3D &pos) override;
+            void setHeight(double height) override;
+            void setCoAxis(const Math::Vector3D &axis) override;
             void setRadius(double radius) override;
             void setMaterial(std::shared_ptr<IMaterial> material) override;
 
