@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>Raytracer Web</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='icon.png') }}" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -50,40 +51,106 @@
             <div class="primitives">
                 <h2>Primitives:</h2>
 
-                <h4>Sphere 1:</h4>
+                <h4>Sphere :</h4>
                 <label>x:</label>
-                <input type="number" name="sphere1_x" placeholder="4" step="0.1" />
+                <input type="number" name="sphere_x" placeholder="4" step="0.1" />
                 <label>y:</label>
-                <input type="number" name="sphere1_y" placeholder="3.5" step="0.1" />
+                <input type="number" name="sphere_y" placeholder="3.5" step="0.1" />
                 <label>z:</label>
-                <input type="number" name="sphere1_z" placeholder="1" step="0.1" />
+                <input type="number" name="sphere_z" placeholder="1" step="0.1" />
                 <label>Radius:</label>
-                <input type="number" name="sphere1_radius" placeholder="1" min="0" step="0.1"/>
+                <input type="number" name="sphere_radius" placeholder="1" min="0" step="0.1"/>
                 </br>
                 <label>r:</label>
-                <input type="number" name="sphere1_color_r" min="0" max="255" placeholder="200" />
+                <input type="number" name="sphere_color_r" min="0" max="255" placeholder="200" />
                 <label>g:</label>
-                <input type="number" name="sphere1_color_g" min="0" max="255" placeholder="100" />
+                <input type="number" name="sphere_color_g" min="0" max="255" placeholder="100" />
                 <label>b:</label>
-                <input type="number" name="sphere1_color_b" min="0" max="255" placeholder="0" />
+                <input type="number" name="sphere_color_b" min="0" max="255" placeholder="0" />
 
-                <h4>Sphere 2:</h4>
-                <label>x:</label>
-                <input type="number" name="sphere2_x" placeholder="3" step="0.1" />
-                <label>y:</label>
-                <input type="number" name="sphere2_y" placeholder="1" step="0.1" />
-                <label>z:</label>
-                <input type="number" name="sphere2_z" placeholder="0" step="0.1" />
+                <h4>Cylinder:</h4>
+                <label>Base x:</label>
+                <input type="number" name="cyl_base_x" placeholder="-5" step="0.1" />
+                <label>Base y:</label>
+                <input type="number" name="cyl_base_y" placeholder="0" step="0.1" />
+                <label>Base z:</label>
+                <input type="number" name="cyl_base_z" placeholder="0" step="0.1" />
+                <br/>
+                <label>Axis x:</label>
+                <input type="number" name="cyl_axis_x" placeholder="10" step="0.1" />
+                <label>Axis y:</label>
+                <input type="number" name="cyl_axis_y" placeholder="5" step="0.1" />
+                <label>Axis z:</label>
+                <input type="number" name="cyl_axis_z" placeholder="0" step="0.1" />
+                <br/>
                 <label>Radius:</label>
-                <input type="number" name="sphere2_radius" placeholder="1.5" min="0" step="0.1" />
-                </br>
+                <input type="number" name="cyl_radius" placeholder="1" step="0.1" />
+                <label>Height:</label>
+                <input type="number" name="cyl_height" placeholder="2" step="0.1" />
+                <br/>
                 <label>r:</label>
-                <input type="number" name="sphere2_color_r" min="0" max="255" placeholder="0" />
+                <input type="number" name="cyl_color_r" placeholder="255" min="0" max="255" />
                 <label>g:</label>
-                <input type="number" name="sphere2_color_g" min="0" max="255" placeholder="100" />
+                <input type="number" name="cyl_color_g" placeholder="0" min="0" max="255" />
                 <label>b:</label>
-                <input type="number" name="sphere2_color_b" min="0" max="255" placeholder="200" />
-            
+                <input type="number" name="cyl_color_b" placeholder="0" min="0" max="255" />
+                
+                <h4>Cone:</h4>
+                <label>Apex x:</label>
+                <input type="number" name="cone_apex_x" placeholder="5" step="0.1" />
+                <label>Apex y:</label>
+                <input type="number" name="cone_apex_y" placeholder="0" step="0.1" />
+                <label>Apex z:</label>
+                <input type="number" name="cone_apex_z" placeholder="3" step="0.1" />
+                <br/>
+                <label>Axis x:</label>
+                <input type="number" name="cone_axis_x" placeholder="10" step="0.1" />
+                <label>Axis y:</label>
+                <input type="number" name="cone_axis_y" placeholder="10" step="0.1" />
+                <label>Axis z:</label>
+                <input type="number" name="cone_axis_z" placeholder="0" step="0.1" />
+                <br/>
+                <label>Radius:</label>
+                <input type="number" name="cone_radius" placeholder="1" step="0.1" />
+                <label>Height:</label>
+                <input type="number" name="cone_height" placeholder="4" step="0.1" />
+                <br/>
+                <label>r:</label>
+                <input type="number" name="cone_color_r" placeholder="0" min="0" max="255" />
+                <label>g:</label>
+                <input type="number" name="cone_color_g" placeholder="255" min="0" max="255" />
+                <label>b:</label>
+                <input type="number" name="cone_color_b" placeholder="255" min="0" max="255" />
+                
+                <h4>Triangle:</h4>
+                <label>A x:</label>
+                <input type="number" name="tri_ax" placeholder="-2" step="0.1" />
+                <label>A y:</label>
+                <input type="number" name="tri_ay" placeholder="2" step="0.1" />
+                <label>A z:</label>
+                <input type="number" name="tri_az" placeholder="2" step="0.1" />
+                <br/>
+                <label>B x:</label>
+                <input type="number" name="tri_bx" placeholder="4" step="0.1" />
+                <label>B y:</label>
+                <input type="number" name="tri_by" placeholder="3" step="0.1" />
+                <label>B z:</label>
+                <input type="number" name="tri_bz" placeholder="0" step="0.1" />
+                <br/>
+                <label>C x:</label>
+                <input type="number" name="tri_cx" placeholder="1" step="0.1" />
+                <label>C y:</label>
+                <input type="number" name="tri_cy" placeholder="4" step="0.1" />
+                <label>C z:</label>
+                <input type="number" name="tri_cz" placeholder="0" step="0.1" />
+                <br/>
+                <label>r:</label>
+                <input type="number" name="tri_color_r" placeholder="255" min="0" max="255" />
+                <label>g:</label>
+                <input type="number" name="tri_color_g" placeholder="0" min="0" max="255" />
+                <label>b:</label>
+                <input type="number" name="tri_color_b" placeholder="0" min="0" max="255" />                
+
                 <h4>Plane 1:</h4>
                 <label>Axis:</label>
                 <select name="plane1_axis">
