@@ -83,6 +83,11 @@ void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg)
             obj->setCoAxis(cone.axis);
             obj->setMaterial(std::make_shared<RayTracer::FlatColor>(cone.color));
         });
+    
+    addPrimitiveFromConfig(scene, cfg.triangles, "libtriangle.so",
+        [](std::unique_ptr<RayTracer::IPrimitive> &obj, const auto &t) {
+            obj->setVertices(t.a, t.b, t.c);
+        });
 
     addPrimitiveFromConfig(scene, cfg.planes, "libplane.so",
         [](std::unique_ptr<RayTracer::IPrimitive> &obj, const auto &p) {

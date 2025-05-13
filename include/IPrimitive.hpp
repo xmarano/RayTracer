@@ -27,6 +27,7 @@ namespace RayTracer {
             virtual void setAxis(char axis) { (void)axis; }
             virtual void setHeight(double height) { (void)height; }
             virtual void setCoAxis(const Math::Vector3D &axis) { (void)axis; }
+            virtual void setVertices(const Math::Point3D &v0, const Math::Point3D &v1, const Math::Point3D &v2) { (void)v0; (void)v1; (void)v2; }
             std::unique_ptr<IPrimitive> loadPrimitive(const std::string &soName);
 
             Color getBaseColor() const {
