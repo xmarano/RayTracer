@@ -93,6 +93,15 @@ void Main::addObjectsToScene(RayTracer::Scene &scene, const Config::Scene &cfg)
             else pos.z = p.position;
             obj->setPosition(pos);
         });
+    addPrimitiveFromConfig(scene, cfg.objs, "libobj.so",
+        [](std::unique_ptr<RayTracer::IPrimitive> &obj, const auto &o) {
+            obj->setPath(o.path);
+            obj->translate(o.translation);
+            obj->rotate(Math::Vector3D(1,0,0), o.rotation.x);
+            obj->rotate(Math::Vector3D(0,1,0), o.rotation.y);
+            obj->rotate(Math::Vector3D(0,0,1), o.rotation.z);
+            obj->setMaterial(std::make_shared<RayTracer::FlatColor>(o.color));
+    });
 }
 
 

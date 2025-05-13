@@ -1,0 +1,15 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+  <filter name="Quadric Edge Collapse Decimation">
+    <!-- Conserver ~10% des faces (ajustez TargetPerc entre 0.0 et 1.0) -->
+    <Param name="TargetPerc"       value="0.1"/>
+    <Param name="PreserveBoundary" value="1"/>
+    <Param name="BoundaryWeight"   value="1"/>
+    <Param name="PreserveNormal"   value="1"/>
+    <Param name="PreserveTopology" value="1"/>
+    <Param name="OptimalPlacement" value="1"/>
+    <Param name="QualityThr"       value="0.3"/>
+    <Param name="AutoClean"        value="1"/>
+    <Param name="Selected"         value="0"/>
+  </filter>
+</FilterScript>

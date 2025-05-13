@@ -10,208 +10,192 @@
 Config::Scene Config::parseScene(const std::string &file)
 {
     libconfig::Config cfg;
-    Config::Scene scene;
+    Scene scene;
     cfg.setAutoConvert(true);
 
     try {
         cfg.readFile(file.c_str());
-    } catch (const libconfig::FileIOException &fioex) {
+    } catch (const libconfig::FileIOException &) {
         throw RayTracerException("Error: Unable to read the configuration file");
-    } catch (const libconfig::ConfigException &cfgex) {
+    } catch (const libconfig::ConfigException &) {
         throw RayTracerException("Error: Invalid configuration file format");
     }
+
+    cfg.lookupValue("camera.resolution.width",  scene.camera.width);
+    cfg.lookupValue("camera.resolution.height", scene.camera.height);
+    cfg.lookupValue("camera.position.x",      scene.camera.position.x);
+    cfg.lookupValue("camera.position.y",      scene.camera.position.y);
+    cfg.lookupValue("camera.position.z",      scene.camera.position.z);
+    cfg.lookupValue("camera.rotation.x",      scene.camera.rotation.x);
+    cfg.lookupValue("camera.rotation.y",      scene.camera.rotation.y);
+    cfg.lookupValue("camera.rotation.z",      scene.camera.rotation.z);
+    cfg.lookupValue("camera.fieldOfView",     scene.camera.fieldOfView);
+
     try {
-    // Camera
-        // resolution
-        cfg.lookupValue("camera.resolution.width", scene.camera.width);
-        cfg.lookupValue("camera.resolution.height", scene.camera.height);
-        // position
-        cfg.lookupValue("camera.position.x", scene.camera.position.x);
-        cfg.lookupValue("camera.position.y", scene.camera.position.y);
-        cfg.lookupValue("camera.position.z", scene.camera.position.z);
-        // rotation
-        cfg.lookupValue("camera.rotation.x", scene.camera.rotation.x);
-        cfg.lookupValue("camera.rotation.y", scene.camera.rotation.y);
-        cfg.lookupValue("camera.rotation.z", scene.camera.rotation.z);
-        // fieldOfView
-        cfg.lookupValue("camera.fieldOfView", scene.camera.fieldOfView);
-
-    // Primitives
-        // Spheres
-        const libconfig::Setting &spheres = cfg.lookup("primitives.spheres");
+        const auto &spheres = cfg.lookup("primitives.spheres");
         for (int i = 0; i < spheres.getLength(); ++i) {
-            const libconfig::Setting &config_sphere = spheres[i];
-            Config::Sphere s;
-
-            // center
-            s.center.x = config_sphere.lookup("x");
-            s.center.y = config_sphere.lookup("y");
-            s.center.z = config_sphere.lookup("z");
-            // radius
-            s.radius = config_sphere.lookup("r");
-            // color
-            const libconfig::Setting &config_color = config_sphere.lookup("color");
-            s.color = Color(
-                config_color.lookup("r"),
-                config_color.lookup("g"),
-                config_color.lookup("b")
+            const auto &s = spheres[i];
+            Config::Sphere obj;
+            obj.center.x = s.lookup("x");
+            obj.center.y = s.lookup("y");
+            obj.center.z = s.lookup("z");
+            obj.radius   = s.lookup("r");
+            const auto &col = s.lookup("color");
+            obj.color = Color(
+                col.lookup("r"),
+                col.lookup("g"),
+                col.lookup("b")
             );
-
-            scene.spheres.push_back(s);
+            scene.spheres.push_back(obj);
         }
+    } catch (const libconfig::SettingNotFoundException &) {}
 
-        // Cylinders
-        const libconfig::Setting &cylinders = cfg.lookup("primitives.cylinders");
+    try {
+        const auto &cylinders = cfg.lookup("primitives.cylinders");
         for (int i = 0; i < cylinders.getLength(); ++i) {
-            const libconfig::Setting &config_cylinder = cylinders[i];
-            Config::Cylinder c;
-
-            // base
-            const libconfig::Setting &base = config_cylinder.lookup("base");
-            c.base.x = base.lookup("x");
-            c.base.y = base.lookup("y");
-            c.base.z = base.lookup("z");
-            // axis
-            const libconfig::Setting &axis = config_cylinder.lookup("axis");
-            c.axis.x = axis.lookup("x");
-            c.axis.y = axis.lookup("y");
-            c.axis.z = axis.lookup("z");
-
-            // radius
-            c.radius = config_cylinder.lookup("radius");
-            // height
-            c.height = config_cylinder.lookup("height");
-            // color
-            const libconfig::Setting &config_color = config_cylinder.lookup("color");
-            c.color = Color(
-                config_color.lookup("r"),
-                config_color.lookup("g"),
-                config_color.lookup("b")
+            const auto &cset = cylinders[i];
+            Config::Cylinder obj;
+            const auto &base = cset.lookup("base");
+            obj.base.x = base.lookup("x");
+            obj.base.y = base.lookup("y");
+            obj.base.z = base.lookup("z");
+            const auto &axis = cset.lookup("axis");
+            obj.axis.x = axis.lookup("x");
+            obj.axis.y = axis.lookup("y");
+            obj.axis.z = axis.lookup("z");
+            obj.radius = cset.lookup("radius");
+            obj.height = cset.lookup("height");
+            const auto &col = cset.lookup("color");
+            obj.color = Color(
+                col.lookup("r"),
+                col.lookup("g"),
+                col.lookup("b")
             );
-            scene.cylinders.push_back(c);
+            scene.cylinders.push_back(obj);
         }
+    } catch (const libconfig::SettingNotFoundException &) {}
 
-        // Cones
-        const libconfig::Setting &cones = cfg.lookup("primitives.cones");
+    try {
+        const auto &cones = cfg.lookup("primitives.cones");
         for (int i = 0; i < cones.getLength(); ++i) {
-            const libconfig::Setting &config_cone = cones[i];
-            Config::Cone c;
-
-            // apex
-            const libconfig::Setting &apex = config_cone.lookup("apex");
-            c.apex.x = apex.lookup("x");
-            c.apex.y = apex.lookup("y");
-            c.apex.z = apex.lookup("z");
-            // axis
-            const libconfig::Setting &axis = config_cone.lookup("axis");
-            c.axis.x = axis.lookup("x");
-            c.axis.y = axis.lookup("y");
-            c.axis.z = axis.lookup("z");
-
-            // radius
-            c.radius = config_cone.lookup("radius");
-            // height
-            c.height = config_cone.lookup("height");
-            // color
-            const libconfig::Setting &config_color = config_cone.lookup("color");
-            c.color = Color(
-                config_color.lookup("r"),
-                config_color.lookup("g"),
-                config_color.lookup("b")
+            const auto &cset = cones[i];
+            Config::Cone obj;
+            const auto &apex = cset.lookup("apex");
+            obj.apex.x = apex.lookup("x");
+            obj.apex.y = apex.lookup("y");
+            obj.apex.z = apex.lookup("z");
+            const auto &axis = cset.lookup("axis");
+            obj.axis.x = axis.lookup("x");
+            obj.axis.y = axis.lookup("y");
+            obj.axis.z = axis.lookup("z");
+            obj.radius = cset.lookup("radius");
+            obj.height = cset.lookup("height");
+            const auto &col = cset.lookup("color");
+            obj.color = Color(
+                col.lookup("r"),
+                col.lookup("g"),
+                col.lookup("b")
             );
-            scene.cones.push_back(c);
+            scene.cones.push_back(obj);
         }
+    } catch (const libconfig::SettingNotFoundException &) {}
 
-        // Triangles
-        const libconfig::Setting &triangles = cfg.lookup("primitives.triangles");
+    try {
+        const auto &triangles = cfg.lookup("primitives.triangles");
         for (int i = 0; i < triangles.getLength(); ++i) {
-            const libconfig::Setting &config_triangle = triangles[i];
-            Config::Triangle t;
-
-            // vertex a
-            const libconfig::Setting &a = config_triangle.lookup("a");
-            t.a.x = a.lookup("x");
-            t.a.y = a.lookup("y");
-            t.a.z = a.lookup("z");
-            // vertex b
-            const libconfig::Setting &b = config_triangle.lookup("b");
-            t.b.x = b.lookup("x");
-            t.b.y = b.lookup("y");
-            t.b.z = b.lookup("z");
-            // vertex c
-            const libconfig::Setting &c = config_triangle.lookup("c");
-            t.c.x = c.lookup("x");
-            t.c.y = c.lookup("y");
-            t.c.z = c.lookup("z");
-            // color
-            const libconfig::Setting &config_color = config_triangle.lookup("color");
-            t.color = Color(
-                config_color.lookup("r"),
-                config_color.lookup("g"),
-                config_color.lookup("b")
+            const auto &tset = triangles[i];
+            Config::Triangle obj;
+            const auto &a = tset.lookup("a");
+            obj.a.x = a.lookup("x"); obj.a.y = a.lookup("y"); obj.a.z = a.lookup("z");
+            const auto &b = tset.lookup("b");
+            obj.b.x = b.lookup("x"); obj.b.y = b.lookup("y"); obj.b.z = b.lookup("z");
+            const auto &_c = tset.lookup("c");
+            obj.c.x = _c.lookup("x"); obj.c.y = _c.lookup("y"); obj.c.z = _c.lookup("z");
+            const auto &col = tset.lookup("color");
+            obj.color = Color(
+                col.lookup("r"),
+                col.lookup("g"),
+                col.lookup("b")
             );
-
-            scene.triangles.push_back(t);
+            scene.triangles.push_back(obj);
         }
+    } catch (const libconfig::SettingNotFoundException &) {}
 
-        // Planes
-        const libconfig::Setting &planes = cfg.lookup("primitives.planes");
+    try {
+        const auto &planes = cfg.lookup("primitives.planes");
         for (int i = 0; i < planes.getLength(); ++i) {
-            const libconfig::Setting &config_plane = planes[i];
-            Config::Plane p;
-
-            // axis
-            std::string ax;
-            config_plane.lookupValue("axis", ax);
-            p.axis = ax[0];
-            // position
-            p.position = config_plane.lookup("position");
-            // color
-            const libconfig::Setting &config_color = config_plane.lookup("color");
-            p.color = Color(
-                config_color.lookup("r"),
-                config_color.lookup("g"),
-                config_color.lookup("b")
+            const auto &pset = planes[i];
+            Config::Plane obj;
+            std::string axisStr;
+            pset.lookupValue("axis", axisStr);
+            obj.axis = axisStr[0];
+            obj.position = pset.lookup("position");
+            const auto &col = pset.lookup("color");
+            obj.color = Color(
+                col.lookup("r"),
+                col.lookup("g"),
+                col.lookup("b")
             );
-
-            scene.planes.push_back(p);
+            scene.planes.push_back(obj);
         }
+    } catch (const libconfig::SettingNotFoundException &) {}
 
-    // Lights
-        // ambient
-        cfg.lookupValue("lights.ambient", scene.ambient);
-        // diffuse
-        cfg.lookupValue("lights.diffuse", scene.diffuse);
-        // point
-        const libconfig::Setting &points = cfg.lookup("lights.point");
+    try {
+        const auto &objs = cfg.lookup("primitives.objs");
+        for (int i = 0; i < objs.getLength(); ++i) {
+            const auto &oset = objs[i];
+            Config::ObjFile obj;
+            oset.lookupValue("path", obj.path);
+            if (oset.exists("translation")) {
+                const auto &t = oset.lookup("translation");
+                obj.translation.x = t.lookup("x");
+                obj.translation.y = t.lookup("y");
+                obj.translation.z = t.lookup("z");
+            }
+            if (oset.exists("rotation")) {
+                const auto &r = oset.lookup("rotation");
+                obj.rotation.x = r.lookup("x");
+                obj.rotation.y = r.lookup("y");
+                obj.rotation.z = r.lookup("z");
+            }
+            if (oset.exists("color")) {
+                const auto &col = oset.lookup("color");
+                obj.color = Color(
+                    col.lookup("r"),
+                    col.lookup("g"),
+                    col.lookup("b")
+                );
+            }
+            scene.objs.push_back(obj);
+        }
+    } catch (const libconfig::SettingNotFoundException &) {}
+
+    try { cfg.lookupValue("lights.ambient", scene.ambient); } catch(...) {}
+    try { cfg.lookupValue("lights.diffuse", scene.diffuse); } catch(...) {}
+
+    try {
+        const auto &points = cfg.lookup("lights.point");
         for (int i = 0; i < points.getLength(); ++i) {
-            const libconfig::Setting &config_point = points[i];
             Config::Point p;
-
-            // position
-            p.position.x = config_point.lookup("x");
-            p.position.y = config_point.lookup("y");
-            p.position.z = config_point.lookup("z");
-
+            const auto &ps = points[i];
+            p.position.x = ps.lookup("x");
+            p.position.y = ps.lookup("y");
+            p.position.z = ps.lookup("z");
             scene.points.push_back(p);
         }
+    } catch (const libconfig::SettingNotFoundException &) {}
 
-        // directional
-        const libconfig::Setting &directionals = cfg.lookup("lights.directional");
-        for (int i = 0; i < directionals.getLength(); ++i) {
-            const libconfig::Setting &config_directional = directionals[i];
+    try {
+        const auto &dirs = cfg.lookup("lights.directional");
+        for (int i = 0; i < dirs.getLength(); ++i) {
             Config::Directional d;
-    
-            // direction
-            d.direction.x = config_directional.lookup("x");
-            d.direction.y = config_directional.lookup("y");
-            d.direction.z = config_directional.lookup("z");
-    
+            const auto &ds = dirs[i];
+            d.direction.x = ds.lookup("x");
+            d.direction.y = ds.lookup("y");
+            d.direction.z = ds.lookup("z");
             scene.directionals.push_back(d);
         }
-    } catch (const libconfig::SettingNotFoundException &nf) {
-        // si y a pas faut voir ce qu'on fait
-    }
+    } catch (const libconfig::SettingNotFoundException &) {}
 
     return scene;
 }

@@ -29,7 +29,8 @@ OBJ         = $(SRC:.cpp=.o)
 PLUGIN_SO   = plugins/libsphere.so \
               plugins/libplane.so \
               plugins/libcylinder.so \
-              plugins/libcone.so
+              plugins/libcone.so \
+              plugins/libobj.so
 
 PLUGIN_DEP  = src/Math3D.cpp src/Material.cpp
 TEST_SRC    = criterion.cpp
@@ -61,6 +62,9 @@ plugins/libcylinder.so: plugins/Cylinder/Cylinder.cpp $(PLUGIN_DEP)
 	g++ $(FLAGS) -shared -fPIC -o $@ $^
 
 plugins/libcone.so: plugins/Cone/Cone.cpp $(PLUGIN_DEP)
+	g++ $(FLAGS) -shared -fPIC -o $@ $^
+
+plugins/libobj.so: plugins/Obj/Obj.cpp $(PLUGIN_DEP)
 	g++ $(FLAGS) -shared -fPIC -o $@ $^
 
 %.o: %.cpp
