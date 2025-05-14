@@ -162,3 +162,13 @@ Or visit directly [https://raytracer.tektests.ovh](https://raytracer.tektests.ov
 ## 👨‍💻 Extending the RayTracer
 
 To add new primitives or materials, implement the `IPrimitive` or `IMaterial` interfaces and place your plugins in the `plugins/` folder.
+
+
+Project made by Epitech students. Here is a list of the contributors:
+
+```bash
+tom.clerc@epitech.eu
+leo.gregori@epitech.eu
+selim.bouasker@epitech.eu
+enzo.cacciapuoti@epitech.eu
+```
