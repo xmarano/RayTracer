@@ -8,7 +8,7 @@
 The RayTracer is a 3D rendering engine that simulates the physical behavior of light to create photorealistic images. This project implements the ray tracing algorithm to generate renders of 3D scenes with complex visual effects.
 
 <div align="center">
-    <img src="scene.gif" alt="Render Animation" width="100%"/>
+    <img src="scene_spheres.gif" alt="Render Animation" width="100%"/>
 </div>
 
 ## 🔗 Resources
