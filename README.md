@@ -8,7 +8,7 @@
 The RayTracer is a 3D rendering engine that simulates the physical behavior of light to create photorealistic images. This project implements the ray tracing algorithm to generate renders of 3D scenes with complex visual effects.
 
 <div align="center">
-    <img src="scene_spheres.gif" alt="Render Animation" width="100%"/>
+    <img src="scenes/scene_spheres.gif" alt="Render Animation" width="100%"/>
 </div>
 
 ## 🔗 Resources
@@ -61,11 +61,6 @@ brew install imagemagick
 
 **Linux**
 ```bash
-sudo apt-get install imagemagick
-```
-
-**RaspberryPi (Linux)**
-```bash
 sudo apt update
 sudo apt install -y build-essential libsfml-dev libconfig++-dev imagemagick
 ```
@@ -85,7 +80,7 @@ make
 
 ### Creating Animations
 ```bash
-python3.10 create_animation.py
+python3.10 create_animation.py [--shpere] [--cone] [--cylinder]
 ```
 
 ## 📋 Configuration File Format
@@ -93,36 +88,26 @@ python3.10 create_animation.py
 The RayTracer uses `.cfg` files to define scenes to render. Here is a simplified example:
 
 ```
-camera: {
-    position: {x: 0, y: 0, z: -10};
-    rotation: {x: 0, y: 0, z: 0};
-    fov: 90;
+camera : {
+    resolution = { width = 0; height = 0; };
+    position   = { x = 0; y = 0; z = 0; };
+    rotation   = { x = 0; y = 0; z = 0; };
+    fieldOfView = 90.0;
 };
 
-primitives: {
-    spheres: (
-        {
-            position: {x: 0, y: 0, z: 0};
-            radius: 1;
-            material: {
-                color: {r: 255, g: 0, b: 0};
-                ambient: 0.2;
-                diffuse: 0.8;
-                specular: 1.0;
-                reflection: 0.0;
-            };
-        }
-    );
+primitives : {
+    spheres = ();
+    cylinders = ();
+    cones = ();
+    triangles = ();
+    planes = ();
 };
 
-lights: {
-    ambient: {intensity: 0.1};
-    directional: (
-        {
-            direction: {x: 0, y: 1, z: -1};
-            intensity: 0.5;
-        }
-    );
+lights : {
+    ambient = 0.0;
+    diffuse = 0.0;
+    point = ();
+    directional = ();
 };
 ```
 

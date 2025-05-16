@@ -174,7 +174,7 @@ def convert_to_gif(img):
     for i in tqdm(range(img), desc="Converting to PNG"):
         os.system(f"magick scenes/config_animation/{i:02}.ppm scenes/config_animation/{i:02}.png")
     sleep(1)
-    os.system("magick -delay 5 -loop 0 scenes/config_animation/*.png scene.gif")
+    os.system("magick -delay 5 -loop 0 scenes/config_animation/*.png scenes/scene.gif")
     sleep(1)
     os.system("rm scenes/config_animation/*")
     print("GIF file created [scene.gif]")
