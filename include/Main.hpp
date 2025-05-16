@@ -17,6 +17,8 @@
 #include <vector>
 #include <string>
 
+RayTracer::PluginLoader loader;
+
 class Main {
     public:
         void printHelp();
@@ -34,7 +36,7 @@ void addPrimitiveFromConfig(
     SetterFunc setter)
 {
     for (const auto &cfg : configs) {
-        auto obj = loadPrimitive(pluginName);
+        auto obj = loader.loadPrimitive(pluginName);
         setter(obj, cfg);
         obj->setMaterial(std::make_shared<RayTracer::FlatColor>(cfg.color));
         scene.addObject(std::move(obj));

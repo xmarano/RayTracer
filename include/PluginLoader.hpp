@@ -11,4 +11,9 @@
 #include <string>
 #include "IPrimitive.hpp"
 
-std::unique_ptr<RayTracer::IPrimitive> loadPrimitive(const std::string &soName);
+namespace RayTracer {
+    class PluginLoader {
+        public:
+            std::unique_ptr<IPrimitive> loadPrimitive(const std::string &soName);
+    };
+}
