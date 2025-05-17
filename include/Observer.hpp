@@ -1,15 +1,10 @@
-/*
-** EPITECH PROJECT, 2024
-** Semestre 4
-** File description:
-** Observer.hpp
-*/
-
 #ifndef OBSERVER_HPP
 #define OBSERVER_HPP
 
 #include <vector>
 #include <memory>
+
+namespace RayTracer {
 
 class IObserver {
 public:
@@ -34,5 +29,7 @@ public:
 private:
     std::vector<std::shared_ptr<IObserver>> _observers;
 };
+
+}
 
 #endif

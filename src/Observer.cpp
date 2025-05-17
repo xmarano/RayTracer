@@ -8,6 +8,8 @@
 #include "Observer.hpp"
 #include <algorithm>
 
+namespace RayTracer {
+
 void Subject::attach(std::shared_ptr<IObserver> observer) {
     _observers.push_back(observer);
 }
@@ -20,4 +22,6 @@ void Subject::notify() {
     for (const auto& observer : _observers) {
         if (observer) observer->update();
     }
+}
+
 }
